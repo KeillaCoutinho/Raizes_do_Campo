@@ -2101,3 +2101,21 @@ select:focus {
         height: 230px;
     }
 }
+
+/* ============================= */
+/* Validação do formulário       */
+/* ============================= */
+
+.campo-invalido {
+    border: 2px solid #e74c3c !important;
+    background-color: rgba(231, 76, 60, 0.08);
+}
+
+.mensagem-erro {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    color: #e74c3c;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
