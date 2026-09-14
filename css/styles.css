@@ -522,23 +522,57 @@ button:focus-visible {
 }
 
 footer {
-    background: rgba(9, 17, 10, 0.96);
+    position: relative;
+    margin-top: 72px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 12% 0%, rgba(156, 216, 116, 0.14), transparent 28%),
+        linear-gradient(145deg, #101d11 0%, #071008 100%);
     color: #d7e3d0;
+    border-top: 1px solid rgba(156, 216, 116, 0.16);
+}
+
+footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: min(260px, 32vw);
+    height: 3px;
+    background: var(--accent);
+    box-shadow: 0 0 28px rgba(156, 216, 116, 0.45);
 }
 
 .footer-container {
     max-width: 1180px;
     margin: 0 auto;
-    padding: 48px 28px;
+    padding: 64px 28px 52px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 28px;
+    grid-template-columns: minmax(260px, 1.4fr) minmax(220px, 0.9fr) minmax(220px, 0.8fr);
+    gap: clamp(28px, 6vw, 84px);
 }
 
 .footer-container h3,
 .footer-container h4 {
-    margin-bottom: 14px;
+    margin: 0 0 16px;
     color: #f9fce6;
+}
+
+.footer-container h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.65rem;
+    letter-spacing: -0.02em;
+}
+
+.footer-container h4 {
+    color: var(--accent);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.footer-container > div:first-child {
+    max-width: 360px;
 }
 
 .footer-container p,
@@ -548,27 +582,53 @@ footer {
     text-decoration: none;
 }
 
+.footer-container p {
+    max-width: 34ch;
+    margin: 0;
+    line-height: 1.65;
+}
+
 .footer-container ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+    gap: 10px 20px;
 }
 
 .footer-container li {
-    margin-bottom: 10px;
+    margin: 0;
 }
 
 .footer-container a:hover,
 .footer-container a:focus-visible {
     color: var(--accent);
+    transform: translateX(3px);
+}
+
+.footer-container a {
+    display: inline-block;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-container > div:last-child p + p {
+    margin-top: 8px;
 }
 
 .copyright {
-    text-align: center;
-    padding: 18px 24px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    min-height: 64px;
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(0, 0, 0, 0.16);
     color: #99ad8e;
-    font-size: 0.95rem;
+    font-size: 0.82rem;
+    text-align: center;
+    line-height: 1.5;
 }
 
 .scroll-reveal {
@@ -656,6 +716,24 @@ footer {
     .pagina {
         margin: 24px 16px;
         padding: 28px;
+    }
+
+    footer {
+        margin-top: 48px;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 34px;
+        padding: 48px 20px 38px;
+    }
+
+    .footer-container > div:first-child {
+        max-width: none;
+    }
+
+    .footer-container ul {
+        max-width: 360px;
     }
 }
 
