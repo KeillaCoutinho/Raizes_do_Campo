@@ -223,43 +223,115 @@ header nav a.active {
     line-height: 1.7;
 }
 
+/* =================================
+   BOTÕES DOS HEROES
+================================= */
+
 .hero-btns {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 14px;
     margin-bottom: 55px;
 }
 
-.hero .btn {
+/* Estilo base dos botões */
+.hero-btns > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     min-width: 190px;
-    padding: 15px 25px;
+    min-height: 52px;
+    padding: 14px 25px;
+
     border-radius: 999px;
     font-weight: 700;
+    line-height: 1.2;
     text-align: center;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    text-decoration: none;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease;
 }
 
-.hero .btn-primary {
+/* Botão preenchido */
+.hero-btns > .btn-primary,
+.hero-btns > .btn {
     background: var(--accent);
     color: #102109;
+    border: 1px solid var(--accent);
 }
 
-.hero .btn-primary:hover {
+/* Hover do botão preenchido */
+.hero-btns > .btn-primary:hover,
+.hero-btns > .btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 14px 35px rgba(156, 216, 116, 0.25);
 }
 
-.hero .btn-outline {
-    border-radius: 999px;
+/* Botão com contorno */
+.hero-btns > .btn-outline {
     border: 1px solid rgba(255, 255, 255, 0.35);
     background: rgba(255, 255, 255, 0.07);
     color: var(--text);
     backdrop-filter: blur(8px);
 }
 
-.hero .btn-outline:hover {
+/* Hover do botão com contorno */
+.hero-btns > .btn-outline:hover {
     transform: translateY(-3px);
     background: rgba(255, 255, 255, 0.13);
+}
+
+/* =================================
+   BOTÕES ESPECÍFICOS DA PÁGINA SOBRE
+================================= */
+
+.hero.sobre .hero-btns {
+    gap: 16px;
+    margin-top: 30px;
+    margin-bottom: 0;
+}
+
+.hero.sobre .hero-btns > a {
+    min-width: 190px;
+    min-height: 52px;
+}
+
+/* Fale Conosco */
+.hero.sobre .hero-btns > .btn {
+    background: var(--accent);
+    color: #102109;
+    border-color: var(--accent);
+}
+
+/* Ver Benefícios */
+.hero.sobre .hero-btns > .btn-outline {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Hover específico da página Sobre */
+.hero.sobre .hero-btns > .btn:hover {
+    background: #b1e99f;
+    border-color: #b1e99f;
+}
+
+.hero.sobre .hero-btns > .btn-outline:hover {
+    background: rgba(156, 216, 116, 0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Foco pelo teclado */
+.hero-btns > a:focus-visible {
+    outline: 3px solid rgba(156, 216, 116, 0.45);
+    outline-offset: 4px;
 }
 
 .hero-info {
@@ -1574,4 +1646,207 @@ select:focus {
         padding: 28px;
     }
 
+}
+
+/* ================================
+   SLIDESHOW - PÁGINA INICIAL
+================================ */
+
+.slideshow-section {
+    width: 100%;
+    padding: 50px 24px;
+    background: var(--bg);
+}
+
+.slideshow {
+    position: relative;
+    width: 100%;
+    max-width: 1180px;
+    height: 420px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 24px;
+    background: #172b18;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Cada slide */
+.slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+/* Slide ativo */
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Imagem */
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Escurece a imagem para o texto ficar legível */
+.slide::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(5, 15, 7, 0.85) 0%,
+        rgba(5, 15, 7, 0.55) 50%,
+        rgba(5, 15, 7, 0.15) 100%
+    );
+}
+
+/* Texto do slide */
+.slide-content {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 8%;
+    transform: translateY(-50%);
+    max-width: 500px;
+    color: #fff;
+}
+
+.slide-content h2 {
+    font-size: 2.3rem;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.slide-content p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    color: #e5e7e5;
+}
+
+/* Botões anterior/próximo */
+/* Botões anterior/próximo */
+.slide-btn {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
+
+    font-size: 2rem;
+    line-height: 1;
+    font-family: Arial, sans-serif;
+
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.slide-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.slide-btn.prev {
+    left: 24px;
+}
+
+.slide-btn.next {
+    right: 24px;
+}
+
+.slide-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.slide-btn.prev {
+    left: 20px;
+}
+
+.slide-btn.next {
+    right: 20px;
+}
+
+/* Indicadores */
+.slide-dots {
+    position: absolute;
+    z-index: 3;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.dot {
+    width: 11px;
+    height: 11px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    width: 28px;
+    border-radius: 10px;
+    background: var(--accent);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .slideshow-section {
+        padding: 30px 16px;
+    }
+
+    .slideshow {
+        height: 450px;
+        border-radius: 18px;
+    }
+
+    .slide-content {
+        left: 8%;
+        right: 8%;
+        max-width: none;
+    }
+
+    .slide-content h2 {
+        font-size: 1.8rem;
+    }
+
+    .slide-content p {
+        font-size: 0.95rem;
+    }
+
+    .slide-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+    }
+
+    .slide-btn.prev {
+        left: 12px;
+    }
+
+    .slide-btn.next {
+        right: 12px;
+    }
 }
