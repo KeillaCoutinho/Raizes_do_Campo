@@ -1,6 +1,7 @@
 const express = require('express');
 const pool = require('./config/database');
 const produtoRoutes = require('./routes/produtoRoutes');
+const categoriaRoutes = require('./routes/categoriaRoutes');
 
 const app = express();
 
@@ -8,6 +9,7 @@ const PORT = 3000;
 app.use(express.json());
 
 app.use(produtoRoutes);
+app.use(categoriaRoutes);
 
 app.get('/', (req, res) => {
     res.send('Backend do Raízes do Campo funcionando! 🌱');
