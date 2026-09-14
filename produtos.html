@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Conheça os produtos da agricultura familiar no Raízes do Campo">
+
+    <title>Produtos | Raízes do Campo</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header>
+        <nav class="navbar">
+
+            <a href="index.html" class="logo">
+                🌱 Raízes do Campo
+            </a>
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                type="button"
+                aria-label="Abrir menu"
+                aria-expanded="false"
+                aria-controls="navLinks">
+                ☰
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+
+                <li>
+                    <a href="index.html">Início</a>
+                </li>
+
+                <li>
+                    <a href="sobre.html">Sobre</a>
+                </li>
+
+                <li>
+                    <a href="beneficios.html">Benefícios</a>
+                </li>
+
+                <li>
+                    <a href="produtos.html" class="active">Produtos</a>
+                </li>
+
+                <li>
+                    <a href="contato.html">Contato</a>
+                </li>
+
+                <li>
+                    <a href="login.html" class="nav-login">Entrar</a>
+                </li>
+
+                <li>
+                    <a href="perfil.html">Meu perfil</a>
+                </li>
+
+            </ul>
+
+        </nav>
+    </header>
+
+
+    <!-- ================= CONTEÚDO ================= -->
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="produtos-hero">
+
+            <div class="produtos-hero-content">
+
+                <span class="hero-tag">
+                    🌾 Agricultura familiar
+                </span>
+
+                <h1>
+                    Do campo para<br>
+                    <span>a sua mesa.</span>
+                </h1>
+
+                <p>
+                    Encontre produtos da agricultura familiar,
+                    conheça quem produz e valorize a produção local.
+                </p>
+
+                <a href="#catalogo" class="btn btn-primary">
+                    Explorar produtos
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- CATÁLOGO -->
+
+        <section class="catalogo" id="catalogo">
+
+            <div class="catalogo-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Nosso catálogo
+                    </span>
+
+                    <h2>
+                        Produtos <span>locais</span>
+                    </h2>
+
+                    <p>
+                        Confira alguns dos produtos oferecidos
+                        pelos produtores da nossa comunidade.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- BUSCA + ORDENAÇÃO -->
+
+            <div class="catalogo-tools">
+
+                <div class="produto-search">
+
+                    <span>🔎</span>
+
+                    <input
+                        type="search"
+                        id="buscarProduto"
+                        placeholder="Buscar produto..."
+                        aria-label="Buscar produto">
+
+                </div>
+
+
+                <select
+                    id="ordenarProdutos"
+                    class="produto-sort"
+                    aria-label="Ordenar produtos">
+
+                    <option value="padrao">
+                        Ordenar por
+                    </option>
+
+                    <option value="nome">
+                        Nome
+                    </option>
+
+                    <option value="menor-preco">
+                        Menor preço
+                    </option>
+
+                    <option value="maior-preco">
+                        Maior preço
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- FILTROS -->
+
+            <div class="produtos-filtros">
+
+                <button
+                    type="button"
+                    class="filtro active"
+                    data-categoria="todos">
+                    Todos
+                </button>
+
+                <button
+                    type="button"
+                    class="filtro"
+                    data-categoria="frutas">
+                    🍊 Frutas
+                </button>
+
+                <button
+                    type="button"
+                    class="filtro"
+                    data-categoria="verduras">
+                    🥬 Verduras
+                </button>
+
+                <button
+                    type="button"
+                    class="filtro"
+                    data-categoria="legumes">
+                    🥕 Legumes
+                </button>
+
+                <button
+                    type="button"
+                    class="filtro"
+                    data-categoria="outros">
+                    🌾 Outros
+                </button>
+
+            </div>
+
+
+            <!-- CONTADOR -->
+
+            <div class="catalogo-resultados">
+
+                <span>
+                    <strong>4</strong> produtos encontrados
+                </span>
+
+            </div>
+
+
+            <!-- PRODUTOS -->
+
+            <div class="produtos-grid">
+
+
+                <!-- PRODUTO 1 -->
+
+                <article
+                    class="produto-card"
+                    data-categoria="frutas"
+                    data-nome="laranja"
+                    data-preco="4.50">
+
+                    <div class="produto-imagem produto-laranja">
+
+                        <span class="produto-emoji">
+                            🍊
+                        </span>
+
+                        <span class="produto-badge">
+                            Frutas
+                        </span>
+
+                    </div>
+
+
+                    <div class="produto-info">
+
+                        <div class="produto-titulo">
+
+                            <div>
+                                <span class="produto-categoria">
+                                    Frutas
+                                </span>
+
+                                <h3>Laranja</h3>
+                            </div>
+
+                        </div>
+
+                        <p>
+                            Laranjas frescas produzidas
+                            por agricultores locais.
+                        </p>
+
+
+                        <div class="produto-produtor">
+                            <span>👨‍🌾</span>
+
+                            <div>
+                                <small>Produtor</small>
+                                <strong>Produtor local</strong>
+                            </div>
+                        </div>
+
+
+                        <div class="produto-footer">
+
+                            <div>
+                                <small>A partir de</small>
+
+                                <strong>
+                                    R$ 4,50
+                                    <span>/ kg</span>
+                                </strong>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn-produto">
+                                Ver detalhes
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PRODUTO 2 -->
+
+                <article
+                    class="produto-card"
+                    data-categoria="legumes"
+                    data-nome="cenoura"
+                    data-preco="5.00">
+
+                    <div class="produto-imagem produto-cenoura">
+
+                        <span class="produto-emoji">
+                            🥕
+                        </span>
+
+                        <span class="produto-badge">
+                            Legumes
+                        </span>
+
+                    </div>
+
+
+                    <div class="produto-info">
+
+                        <span class="produto-categoria">
+                            Legumes
+                        </span>
+
+                        <h3>Cenoura</h3>
+
+                        <p>
+                            Cenouras frescas e selecionadas
+                            de produtores da região.
+                        </p>
+
+
+                        <div class="produto-produtor">
+                            <span>👨‍🌾</span>
+
+                            <div>
+                                <small>Produtor</small>
+                                <strong>Produtor local</strong>
+                            </div>
+                        </div>
+
+
+                        <div class="produto-footer">
+
+                            <div>
+                                <small>A partir de</small>
+
+                                <strong>
+                                    R$ 5,00
+                                    <span>/ kg</span>
+                                </strong>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn-produto">
+                                Ver detalhes
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PRODUTO 3 -->
+
+                <article
+                    class="produto-card"
+                    data-categoria="verduras"
+                    data-nome="alface"
+                    data-preco="3.50">
+
+                    <div class="produto-imagem produto-alface">
+
+                        <span class="produto-emoji">
+                            🥬
+                        </span>
+
+                        <span class="produto-badge">
+                            Verduras
+                        </span>
+
+                    </div>
+
+
+                    <div class="produto-info">
+
+                        <span class="produto-categoria">
+                            Verduras
+                        </span>
+
+                        <h3>Alface</h3>
+
+                        <p>
+                            Folhas frescas cultivadas
+                            por produtores da região.
+                        </p>
+
+
+                        <div class="produto-produtor">
+                            <span>👩‍🌾</span>
+
+                            <div>
+                                <small>Produtor</small>
+                                <strong>Produtor local</strong>
+                            </div>
+                        </div>
+
+
+                        <div class="produto-footer">
+
+                            <div>
+                                <small>A partir de</small>
+
+                                <strong>
+                                    R$ 3,50
+                                    <span>/ un.</span>
+                                </strong>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn-produto">
+                                Ver detalhes
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PRODUTO 4 -->
+
+                <article
+                    class="produto-card"
+                    data-categoria="outros"
+                    data-nome="tomate"
+                    data-preco="6.00">
+
+                    <div class="produto-imagem produto-tomate">
+
+                        <span class="produto-emoji">
+                            🍅
+                        </span>
+
+                        <span class="produto-badge">
+                            Outros
+                        </span>
+
+                    </div>
+
+
+                    <div class="produto-info">
+
+                        <span class="produto-categoria">
+                            Hortaliças
+                        </span>
+
+                        <h3>Tomate</h3>
+
+                        <p>
+                            Tomates frescos produzidos
+                            pela agricultura familiar.
+                        </p>
+
+
+                        <div class="produto-produtor">
+                            <span>👨‍🌾</span>
+
+                            <div>
+                                <small>Produtor</small>
+                                <strong>Produtor local</strong>
+                            </div>
+                        </div>
+
+
+                        <div class="produto-footer">
+
+                            <div>
+                                <small>A partir de</small>
+
+                                <strong>
+                                    R$ 6,00
+                                    <span>/ kg</span>
+                                </strong>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn-produto">
+                                Ver detalhes
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- CTA -->
+
+        <section class="produtor-cta">
+
+            <div class="cta-icon">
+                🌱
+            </div>
+
+            <div class="produtor-cta-text">
+
+                <span class="section-tag">
+                    Para produtores
+                </span>
+
+                <h2>
+                    Você produz?
+                    <span>Faça parte.</span>
+                </h2>
+
+                <p>
+                    Cadastre seus produtos e conecte sua produção
+                    a pessoas interessadas em consumir localmente.
+                </p>
+
+            </div>
+
+            <a
+                href="login.html"
+                class="btn btn-primary">
+                Cadastrar produtos
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-container">
+
+            <div>
+
+                <h3>
+                    🌱 Raízes do Campo
+                </h3>
+
+                <p>
+                    Conectando produtores e consumidores,
+                    valorizando a agricultura familiar.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h4>
+                    Links rápidos
+                </h4>
+
+                <ul>
+
+                    <li>
+                        <a href="index.html">Início</a>
+                    </li>
+
+                    <li>
+                        <a href="sobre.html">Sobre</a>
+                    </li>
+
+                    <li>
+                        <a href="beneficios.html">Benefícios</a>
+                    </li>
+
+                    <li>
+                        <a href="produtos.html">Produtos</a>
+                    </li>
+
+                    <li>
+                        <a href="contato.html">Contato</a>
+                    </li>
+
+                    <li>
+                        <a href="login.html">Entrar</a>
+                    </li>
+
+                    <li>
+                        <a href="perfil.html">Meu perfil</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div>
+
+                <h4>
+                    Contato
+                </h4>
+
+                <p>
+                    📧 contato@agricultura.com
+                </p>
+
+                <p>
+                    📞 (75) 99999-9999
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="copyright">
+
+            © 2026 Raízes do Campo
+            <br>
+            Projeto Integrador - Liga Steam / ArcelorMittal
+
+        </div>
+
+    </footer>
+
+
+    <script src="assets/js/script.js"></script>
+
+</body>
+
+</html>
