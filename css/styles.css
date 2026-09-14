@@ -962,6 +962,271 @@ select:focus {
     transform: translateY(-1px);
 }
 
+
+/* =====================================================
+   RELATÓRIO DENTRO DO PERFIL
+===================================================== */
+
+.relatorio-dashboard {
+    margin-top: 24px;
+}
+
+.relatorio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+    margin-bottom: 28px;
+}
+
+.relatorio-header h2 {
+    margin: 5px 0 8px;
+}
+
+.relatorio-header p {
+    margin: 0;
+    max-width: 650px;
+    color: #777;
+    line-height: 1.6;
+}
+
+.relatorio-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #9cd88c;
+    color: #102109;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.relatorio-status {
+    min-width: 170px;
+    padding: 15px 18px;
+    border-radius: 12px;
+    background: #9cd88c;
+    border: 1px solid #6fa865;
+}
+
+.relatorio-status span {
+    display: block;
+    margin-bottom: 5px;
+    color: #315b39;
+    font-size: 0.75rem;
+}
+
+.relatorio-status strong {
+    color: #102109;
+    font-size: 0.85rem;
+}
+
+
+/* Indicadores */
+
+.relatorio-indicadores {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.relatorio-indicador {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid #6fa865;
+    border-radius: 15px;
+    background: #9cd88c;
+}
+
+.relatorio-icone {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: rgba(16, 33, 9, 0.12);
+    font-size: 1.3rem;
+}
+
+.relatorio-indicador span {
+    display: block;
+    margin-bottom: 4px;
+    color: #315b39;
+    font-size: 0.75rem;
+}
+
+.relatorio-indicador strong {
+    color: #102109;
+    font-size: 1.4rem;
+}
+
+
+/* Detalhes */
+
+.relatorio-detalhes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.relatorio-bloco {
+    padding: 22px;
+    border-radius: 15px;
+    border: 1px solid #6fa865;
+    background: #9cd88c;
+}
+
+.relatorio-bloco-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 22px;
+}
+
+.relatorio-bloco-header h3 {
+    margin: 4px 0 0;
+    color: #102109;
+    font-size: 1.05rem;
+}
+
+.relatorio-bloco-header .card-kicker {
+    color: #000000;
+}
+
+.relatorio-bloco-header > span {
+    font-size: 1.4rem;
+}
+
+
+/* Categorias */
+
+.categoria-relatorio {
+    margin-bottom: 18px;
+}
+
+.categoria-relatorio > div:first-child {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+}
+
+.categoria-relatorio span {
+    color: #315b39;
+    font-size: 0.85rem;
+}
+
+.categoria-relatorio strong {
+    color: #102109;
+    font-size: 0.85rem;
+}
+
+.categoria-barra {
+    height: 7px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: rgba(16, 33, 9, 0.16);
+}
+
+.categoria-barra span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #315b39;
+}
+
+
+/* Estado vazio */
+
+.relatorio-vazio {
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #315b39;
+    text-align: center;
+}
+
+.relatorio-vazio span {
+    font-size: 1.7rem;
+    margin-bottom: 6px;
+}
+
+.relatorio-vazio p {
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+
+/* Produção */
+
+.producao-resumo {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.producao-resumo > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 13px;
+    border-bottom: 1px solid rgba(16, 33, 9, 0.18);
+}
+
+.producao-resumo > div:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.producao-resumo span {
+    color: #315b39;
+    font-size: 0.82rem;
+}
+
+.producao-resumo strong {
+    color: #102109;
+    font-size: 0.9rem;
+}
+
+
+/* Responsividade */
+
+@media (max-width: 1000px) {
+
+    .relatorio-indicadores {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .relatorio-detalhes {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .relatorio-header {
+        flex-direction: column;
+    }
+
+    .relatorio-status {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .relatorio-indicadores {
+        grid-template-columns: 1fr;
+    }
+
+    .relatorio-indicador {
+        padding: 16px;
+    }
+}
+
 /* =========================================================
    PÁGINA DE PRODUTOS
    ========================================================= */
