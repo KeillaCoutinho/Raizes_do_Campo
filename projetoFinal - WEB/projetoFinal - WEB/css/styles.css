@@ -581,3 +581,228 @@ footer {
         padding: 28px;
     }
 }
+
+/* Layout do Dashboard e Tabelas */
+.dashboard-container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 0 15px;
+}
+
+.card-dashboard {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.tabela-crud {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.tabela-crud th, .tabela-crud td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.tabela-crud th {
+  background-color: #f4f4f4;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+/* ==========================================================================
+   Autenticação (Login e Cadastro) & Painel do Usuário (Dashboard / CRUD)
+   ========================================================================== */
+
+/* Estilos de Login e Cadastro */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 75vh;
+    padding: 30px 16px;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(18, 31, 19, 0.85);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px 28px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+}
+
+.auth-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 6px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 10px 0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.tab-btn.active {
+    background: var(--accent);
+    color: #102109;
+}
+
+.auth-form h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #f2f8e6;
+    text-align: center;
+}
+
+.auth-form.hidden {
+    display: none;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    color: #edf6e8;
+}
+
+select {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: #131f16;
+    color: var(--text);
+    padding: 14px 18px;
+    border-radius: 16px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+select:focus {
+    border-color: rgba(156, 216, 116, 0.65);
+    box-shadow: 0 0 0 4px rgba(156, 216, 116, 0.12);
+}
+
+/* Layout do Dashboard e Tabelas (Adaptação Dark Theme) */
+.dashboard-container {
+    max-width: 1050px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.card-dashboard {
+    background: rgba(18, 31, 19, 0.85);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.card-dashboard h2 {
+    margin-top: 0;
+    color: #eaf7db;
+    font-size: 1.4rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+
+/* Tabela CRUD Adaptada ao Layout Escuro */
+.tabela-wrapper {
+    overflow-x: auto;
+}
+
+.tabela-crud {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.95rem;
+}
+
+.tabela-crud th,
+.tabela-crud td {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.tabela-crud th {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #eaf7db;
+    font-weight: 700;
+}
+
+.tabela-crud td img {
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* Botões de Ação na Tabela */
+.btn-edit {
+    background-color: #d9a726;
+    color: #112005;
+    border: none;
+    padding: 7px 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-delete {
+    background-color: #c94a4a;
+    color: #ffffff;
+    border: none;
+    padding: 7px 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-left: 6px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-edit:hover,
+.btn-delete:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}

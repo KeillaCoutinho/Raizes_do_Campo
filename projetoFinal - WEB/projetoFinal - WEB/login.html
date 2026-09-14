@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login e Cadastro - Raízes do Campo</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="servicos.html">Serviços</a>
+      <a href="contato.html">Contato</a>
+      <a href="login.html" class="active">Login</a>
+    </nav>
+  </header>
+
+  <main class="auth-container">
+    <div class="auth-box">
+      <!-- Alternador de Abas -->
+      <div class="auth-tabs">
+        <button id="tab-login" class="tab-btn active">Entrar</button>
+        <button id="tab-cadastro" class="tab-btn">Cadastrar</button>
+      </div>
+
+      <!-- Formulário de Login -->
+      <form id="form-login" class="auth-form active">
+        <h2>Acesse sua conta</h2>
+        <div class="input-group">
+          <label for="login-email">E-mail</label>
+          <input type="email" id="login-email" required placeholder="seu@email.com">
+        </div>
+        <div class="input-group">
+          <label for="login-senha">Senha</label>
+          <input type="password" id="login-senha" required placeholder="******">
+        </div>
+        <button type="submit" class="btn-primary">Entrar</button>
+      </form>
+
+      <!-- Formulário de Cadastro -->
+      <form id="form-cadastro" class="auth-form hidden">
+        <h2>Crie uma conta</h2>
+        <div class="input-group">
+          <label for="cad-nome">Nome Completo</label>
+          <input type="text" id="cad-nome" required placeholder="Seu nome">
+        </div>
+        <div class="input-group">
+          <label for="cad-email">E-mail</label>
+          <input type="email" id="cad-email" required placeholder="seu@email.com">
+        </div>
+        <div class="input-group">
+          <label for="cad-senha">Senha</label>
+          <input type="password" id="cad-senha" required placeholder="******">
+        </div>
+        <button type="submit" class="btn-primary">Cadastrar</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="assets/js/script.js"></script>
+</body>
+</html>

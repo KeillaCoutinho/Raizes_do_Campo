@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Usuário - Raízes do Campo</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="servicos.html">Serviços</a>
+      <a href="contato.html">Contato</a>
+      <a href="perfil.html" class="active">Meu Perfil</a>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    <h1>Painel de Gerenciamento</h1>
+
+    <!-- Seção de Dados do Perfil -->
+    <section class="card-dashboard">
+      <h2>Meus Dados</h2>
+      <p><strong>Nome:</strong> <span id="user-name">Carregando...</span></p>
+      <p><strong>E-mail:</strong> <span id="user-email">Carregando...</span></p>
+    </section>
+
+    <!-- Formulário para Cadastrar/Editar Item (CRUD) -->
+    <section class="card-dashboard">
+      <h2 id="form-title">Cadastrar Novo Produto / Serviço</h2>
+      <form id="form-crud" enctype="multipart/form-data">
+        <input type="hidden" id="item-id">
+        
+        <div class="input-group">
+          <label for="titulo">Título</label>
+          <input type="text" id="titulo" required placeholder="Ex: Análise de Solo">
+        </div>
+
+        <div class="input-group">
+          <label for="categoria">Categoria</label>
+          <select id="categoria" required>
+            <option value="">Selecione uma categoria</option>
+            <option value="1">Consultoria</option>
+            <option value="2">Produtos Agrícolas</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="preco">Preço (R$)</label>
+          <input type="number" step="0.01" id="preco" placeholder="0.00">
+        </div>
+
+        <div class="input-group">
+          <label for="imagem">Imagem do Produto/Serviço</label>
+          <input type="file" id="imagem" accept="image/*">
+        </div>
+
+        <div class="input-group">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" rows="4" placeholder="Detalhes sobre o serviço ou produto..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">Salvar Item</button>
+      </form>
+    </section>
+
+    <!-- Tabela para Listagem, Edição e Exclusão -->
+    <section class="card-dashboard">
+      <h2>Meus Anúncios Cadastrados</h2>
+      <table class="tabela-crud">
+        <thead>
+          <tr>
+            <th>Imagem</th>
+            <th>Título</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="lista-itens">
+          <!-- Linhas renderizadas via JS -->
+          <tr>
+            <td><img src="assets/img/agricultura_capa.jpeg" alt="Item" width="50"></td>
+            <td>Análise de Solo</td>
+            <td>Consultoria</td>
+            <td>R$ 150,00</td>
+            <td>
+              <button class="btn-edit">Editar</button>
+              <button class="btn-delete">Excluir</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="assets/js/script.js"></script>
+</body>
+</html>
