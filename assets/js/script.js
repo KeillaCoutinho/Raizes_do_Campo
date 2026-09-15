@@ -13,6 +13,53 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const apiUrl = "http://127.0.0.1:3000";
+
+    async function fazerLogout(e) {
+        e.preventDefault();
+
+        try {
+            const resposta = await fetch(`${apiUrl}/logout`, {
+                method: "POST",
+                credentials: "include"
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(resultado.erro || "Erro ao sair.");
+            }
+
+            window.location.href = "login.html";
+        } catch (erro) {
+            console.error("Erro ao fazer logout:", erro);
+            alert("Não foi possível encerrar a sessão.");
+        }
+    }
+
+    document.querySelectorAll(".nav-logout").forEach((botao) => {
+        botao.addEventListener("click", fazerLogout);
+    });
+
+    const linkLogin = document.querySelector(".nav-login");
+
+    if (linkLogin) {
+        fetch(`${apiUrl}/sessao`, {
+            method: "GET",
+            credentials: "include"
+        }).then((resposta) => {
+            if (resposta.ok) {
+                linkLogin.textContent = "Sair";
+                linkLogin.href = "#";
+                linkLogin.classList.remove("nav-login");
+                linkLogin.classList.add("nav-logout");
+                linkLogin.addEventListener("click", fazerLogout);
+            }
+        }).catch(() => {
+            // O restante da página continua disponível sem o backend.
+        });
+    }
+
 
     // ==========================================
     // 2. CADASTRO DE PRODUTO
@@ -43,10 +90,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 .trim();
 
             try {
+                const itemId = document
+                    .getElementById("item-id")
+                    .value;
+
                 const resposta = await fetch(
-                    "http://127.0.0.1:3000/produtos",
+                    itemId
+                        ? `${apiUrl}/produtos/${itemId}`
+                        : `${apiUrl}/produtos`,
                     {
-                        method: "POST",
+                        method: itemId ? "PUT" : "POST",
                         credentials: "include",
                         headers: {
                             "Content-Type": "application/json"
@@ -76,11 +129,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 alert(
-                    "Produto cadastrado com sucesso! 🌱"
+                    itemId
+                        ? "Produto atualizado com sucesso!"
+                        : "Produto cadastrado com sucesso!"
                 );
 
                 // Limpa o formulário
                 formCrud.reset();
+                document.getElementById("item-id").value = "";
+                document.getElementById("form-title").textContent =
+                    "Cadastrar Novo Produto / Serviço";
+                document.querySelector("#form-crud button[type='submit']")
+                    .textContent = "Salvar Item";
 
                 // Atualiza a lista de produtos
                 carregarProdutos();
@@ -186,6 +246,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
 
+            document.querySelectorAll(".btn-editar").forEach((botao) => {
+                botao.addEventListener("click", () => {
+                    const produto = produtos.find((item) =>
+                        String(item.id_produto) === botao.dataset.id
+                    );
+
+                    if (produto) {
+                        editarProduto(produto);
+                    }
+                });
+            });
+
         } catch (erro) {
             console.error(
                 "Erro ao carregar meus produtos:",
@@ -205,6 +277,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
             }
         }
+    }
+
+    function editarProduto(produto) {
+        const formulario = document.getElementById("form-crud");
+
+        if (!formulario) {
+            return;
+        }
+
+        document.getElementById("item-id").value = produto.id_produto;
+        document.getElementById("titulo").value = produto.nome || "";
+        document.getElementById("categoria").value = produto.id_categoria || "";
+        document.getElementById("preco").value = produto.preco || "";
+        document.getElementById("descricao").value = produto.descricao || "";
+        document.getElementById("form-title").textContent =
+            "Editar Produto / Serviço";
+        document.querySelector("#form-crud button[type='submit']")
+            .textContent = "Atualizar Item";
+
+        formulario.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
 // Carrega os produtos somente se
