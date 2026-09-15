@@ -1,8 +1,8 @@
 //O "dotev" serve para pegar as informações do arquivo .env 
 //O "pg" é o driver do PostgreSQL para Node.js
 
-const { Pool } = require('pg');
 require('dotenv').config();
+const { Pool } = require('pg');
 
 const pool = new Pool({
     host: process.env.DB_HOST,

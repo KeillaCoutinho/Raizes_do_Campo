@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     "http://127.0.0.1:3000/produtos",
                     {
                         method: "POST",
+                        credentials: "include",
                         headers: {
                             "Content-Type": "application/json"
                         },
@@ -94,98 +95,156 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // ==========================================
-    // 3. CARREGAR PRODUTOS
-    // ==========================================
+// ==========================================
+// 3. CARREGAR MEUS PRODUTOS
+// ==========================================
 
-    async function carregarProdutos() {
-        try {
-            const resposta = await fetch(
-                "http://127.0.0.1:3000/produtos"
-            );
-
-            if (!resposta.ok) {
-                throw new Error(
-                    "Erro ao buscar produtos."
-                );
+async function carregarProdutos() {
+    try {
+        const resposta = await fetch(
+            "http://127.0.0.1:3000/meus-produtos",
+            {
+                method: "GET",
+                credentials: "include"
             }
+        );
 
-            const produtos = await resposta.json();
-
-            console.log(
-                "Produtos recebidos da API:",
-                produtos
-            );
-
-            const listaItens =
-                document.getElementById("lista-itens");
-
-            // Se a página não tiver a tabela,
-            // não faz nada
-            if (!listaItens) {
-                return;
-            }
-
-            // Limpa a tabela antes de preencher
-            listaItens.innerHTML = "";
-
-            // Percorre todos os produtos recebidos
-            produtos.forEach((produto) => {
-
-                const linha =
-                    document.createElement("tr");
-
-                linha.innerHTML = `
-                    <td>
-                        ${produto.nome}
-                    </td>
-
-                    <td>
-                        ${produto.id_categoria}
-                    </td>
-
-                    <td>
-                        R$ ${Number(produto.preco).toFixed(2)}
-                    </td>
-
-                    <td>
-                        ${produto.unidade_medida || "-"}
-                    </td>
-
-                    <td>
-                        <button
-                            type="button"
-                            class="btn-editar"
-                            data-id="${produto.id_produto}">
-                            Editar
-                        </button>
-
-                        <button
-                            type="button"
-                            class="btn-excluir"
-                            data-id="${produto.id_produto}">
-                            Excluir
-                        </button>
-                    </td>
-                `;
-
-                listaItens.appendChild(linha);
-            });
-
-        } catch (erro) {
-            console.error(
-                "Erro ao carregar produtos:",
-                erro
+        if (!resposta.ok) {
+            throw new Error(
+                "Erro ao buscar seus produtos."
             );
         }
+
+        const produtos = await resposta.json();
+
+        console.log(
+            "Meus produtos recebidos da API:",
+            produtos
+        );
+
+        const listaItens =
+            document.getElementById("lista-itens");
+
+        // Se a página não tiver a tabela,
+        // não faz nada
+        if (!listaItens) {
+            return;
+        }
+
+        // Limpa a tabela antes de preencher
+        listaItens.innerHTML = "";
+
+        // Percorre somente os produtos do produtor logado
+        produtos.forEach((produto) => { 
+            const linha =
+                document.createElement("tr");
+
+            linha.innerHTML = `
+                <td>
+                    ${produto.nome}
+                </td>
+
+                <td>
+                    ${produto.id_categoria}
+                </td>
+
+                <td>
+                    R$ ${Number(produto.preco).toFixed(2)}
+                </td>
+
+                <td>
+                    ${produto.unidade_medida || "-"}
+                </td>
+
+                <td>
+                    <button
+                        type="button"
+                        class="btn-editar"
+                        data-id="${produto.id_produto}">
+                        Editar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-excluir"
+                        data-id="${produto.id_produto}">
+                        Excluir
+                    </button>
+                </td>
+            `;
+
+            listaItens.appendChild(linha);
+        });
+        
+        // Adiciona o evento aos botões Excluir
+            document.querySelectorAll(".btn-excluir").forEach((botao) => {
+                botao.addEventListener("click", () => {
+                const id_produto = botao.dataset.id;
+
+                excluirProduto(id_produto);
+                });
+            });
+
+    } catch (erro) {
+        console.error(
+            "Erro ao carregar meus produtos:",
+            erro
+        );
+    }
+}
+
+// Carrega os produtos somente se
+// existir a tabela no HTML
+if (document.getElementById("lista-itens")) {
+    carregarProdutos();
+}
+
+// BOTÃO DE EXCLUIR PRODUTO
+
+async function excluirProduto(id_produto) {
+    const confirmar = confirm(
+        "Tem certeza que deseja excluir este produto?"
+    );
+
+    if (!confirmar) {
+        return;
     }
 
-    // Carrega os produtos somente se
-    // existir a tabela no HTML
-    if (document.getElementById("lista-itens")) {
+    try {
+        const resposta = await fetch(
+            `http://127.0.0.1:3000/produtos/${id_produto}`,
+            {
+                method: "DELETE",
+                credentials: "include"
+            }
+        );
+
+        const resultado = await resposta.json();
+
+        if (!resposta.ok) {
+            alert(
+                resultado.erro ||
+                "Erro ao excluir produto."
+            );
+            return;
+        }
+
+        alert("Produto excluído com sucesso!");
+
+        // Atualiza a tabela depois da exclusão
         carregarProdutos();
-    }
 
+    } catch (erro) {
+        console.error(
+            "Erro ao excluir produto:",
+            erro
+        );
+
+        alert(
+            "Não foi possível conectar com o servidor."
+        );
+    }
+}
 
     // ==========================================
     // 4. VALIDAÇÃO DO FORMULÁRIO DE CONTATO
