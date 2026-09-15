@@ -101,6 +101,27 @@ Projeto desenvolvido como parte do **Projeto Integrador - Liga Steam / ArcelorMi
 
 Este projeto é de caráter acadêmico e educacional, podendo ser utilizado como referência para estudos e projetos relacionados à sustentabilidade e desenvolvimento web.
 
+## ☁️ Deploy no Render
+
+O projeto pode ser publicado como um **Web Service** único, pois o backend também serve os arquivos do site.
+
+1. Envie o projeto para um repositório no GitHub e crie um Web Service no [Render](https://render.com/).
+2. Selecione a raiz do repositório como **Root Directory**.
+3. Use `npm ci` em **Build Command** e `npm start` em **Start Command**.
+4. Cadastre estas variáveis em **Environment**:
+
+```text
+NODE_ENV=production
+SESSION_SECRET=uma-chave-longa-e-aleatoria
+DB_HOST=...
+DB_PORT=5432
+DB_NAME=...
+DB_USER=...
+DB_PASSWORD=...
+```
+
+O Render fornece `PORT` automaticamente. O banco precisa ser um PostgreSQL acessível pelo serviço e já conter as tabelas usadas pela aplicação. Se o frontend for publicado em outro domínio, adicione também `FRONTEND_URL` com a URL completa dele, por exemplo `https://seu-site.onrender.com`.
+
 ---
 
 ### 🌿 "Fortalecendo o campo e alimentando o Brasil."

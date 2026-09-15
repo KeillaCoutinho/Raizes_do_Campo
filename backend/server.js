@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(session({
-    secret: 'raizes-do-campo-secret',
+    secret: process.env.SESSION_SECRET || 'raizes-do-campo-secret-local',
     resave: false,
     saveUninitialized: false,
     cookie: {

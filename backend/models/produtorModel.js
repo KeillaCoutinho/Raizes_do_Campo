@@ -31,12 +31,13 @@ async function buscarResumoProducao(id_produtor) {
             COUNT(*)::INTEGER AS total_registros,
             (ARRAY_AGG(data_colheita ORDER BY data_colheita DESC, id_registro DESC))[1] AS ultima_colheita,
             (ARRAY_AGG(produto ORDER BY data_colheita DESC, id_registro DESC))[1] AS produto,
-                        (ARRAY_AGG(peso ORDER BY data_colheita DESC, id_registro DESC))[1] AS peso,
-                        COALESCE(AVG(produto_cadastrado.preco), 0)::NUMERIC(12, 2) AS valor_medio
+            (ARRAY_AGG(peso ORDER BY data_colheita DESC, id_registro DESC))[1] AS peso,
+            COALESCE((
+                SELECT AVG(preco)
+                FROM produto
+                WHERE id_produtor = $1
+            ), 0)::NUMERIC(12, 2) AS valor_medio
          FROM registro_producao
-                 LEFT JOIN produto AS produto_cadastrado
-                     ON produto_cadastrado.nome = registro_producao.produto
-                    AND produto_cadastrado.id_produtor = registro_producao.id_produtor
          WHERE registro_producao.id_produtor = $1;`,
         [id_produtor]
     );
