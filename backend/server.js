@@ -1,17 +1,37 @@
 const express = require('express');
 const pool = require('./config/database');
+const cors = require('cors');
+
 const produtoRoutes = require('./routes/produtoRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
 const contatoRoutes = require('./routes/contatoRoutes');
+const consumidorRoutes = require('./routes/consumidorRoutes');
+
+const session = require('express-session');
 
 const app = express();
 
 const PORT = 3000;
 app.use(express.json());
 
+app.use(cors({
+    origin: 'http://127.0.0.1:5500',
+    credentials: true
+}));
+
+app.use(session({
+    secret: 'raizes-do-campo-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 // a sessão irá durar 1 hora
+    }
+}));
+
 app.use(produtoRoutes);
 app.use(categoriaRoutes);
 app.use(contatoRoutes);
+app.use(consumidorRoutes);
 
 app.get('/', (req, res) => {
     res.send('Backend do Raízes do Campo funcionando! 🌱');

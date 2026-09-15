@@ -191,19 +191,99 @@ if (formContato) {
     });
   }
 
-  // 4. Validação do formulário de Cadastro
-  if (formCadastro) {
-    formCadastro.addEventListener("submit", (e) => {
-      const senha = document.getElementById("cad-senha");
 
-      if (senha && senha.value.length < 6) {
-        e.preventDefault();
-        alert("A senha deve ter no mínimo 6 caracteres.");
+    // 4. Login do usuário
+  if (formLogin) {
+    formLogin.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("login-email").value.trim();
+      const senha = document.getElementById("login-senha").value;
+
+      try {
+        const resposta = await fetch("http://localhost:3000/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email: email,
+            senha: senha
+          })
+        });
+
+        const resultado = await resposta.json();
+
+        if (!resposta.ok) {
+          alert(resultado.erro);
+          return;
+        }
+
+        alert(resultado.mensagem);
+
+        // Depois do login, vai para o perfil
+        window.location.href = "perfil.html";
+
+      } catch (erro) {
+        console.error("Erro ao fazer login:", erro);
+        alert("Não foi possível conectar com o servidor.");
       }
     });
   }
 
-    // 5. Scroll Reveal e Efeito Tilt nos Cards
+  
+  // 5. Cadastro do usuário
+if (formCadastro) {
+  formCadastro.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const nome = document.getElementById("cad-nome").value.trim();
+    const email = document.getElementById("cad-email").value.trim();
+    const senha = document.getElementById("cad-senha").value;
+
+    // Validação da senha
+    if (senha.length < 6) {
+      alert("A senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
+
+    try {
+      const resposta = await fetch("http://localhost:3000/consumidores", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          nome: nome,
+          email: email,
+          senha: senha
+        })
+      });
+
+      const resultado = await resposta.json();
+
+      if (!resposta.ok) {
+        alert(resultado.erro);
+        return;
+      }
+
+      alert(resultado.mensagem);
+
+      formCadastro.reset();
+
+      // Volta para a aba de login
+      tabLogin.click();
+
+    } catch (erro) {
+      console.error("Erro ao cadastrar:", erro);
+      alert("Não foi possível conectar com o servidor.");
+    }
+  });
+}
+
+
+    // 6. Scroll Reveal e Efeito Tilt nos Cards
 
   // Seleciona TODOS os elementos que devem aparecer ao rolar
   const revealElements = document.querySelectorAll(".scroll-reveal");
