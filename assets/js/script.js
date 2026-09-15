@@ -1901,6 +1901,16 @@ async function excluirProduto(id_produto) {
             ".filtro"
         );
 
+    const produtoSearch = document.querySelector(
+        ".produto-search"
+    );
+
+    if (produtoSearch && searchInput) {
+        produtoSearch.addEventListener("click", () => {
+            searchInput.focus();
+        });
+    }
+
 
     if (!productGrid) {
         return;
@@ -1908,6 +1918,14 @@ async function excluirProduto(id_produto) {
 
 
     let categoriaAtual = "todos";
+
+    function normalizarTexto(valor) {
+        return String(valor || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+    }
 
 
     function atualizarProdutos() {
@@ -1920,31 +1938,23 @@ async function excluirProduto(id_produto) {
             );
 
 
-        const termo =
-            searchInput
-                ? searchInput.value
-                    .toLowerCase()
-                    .trim()
-                : "";
+        const termo = normalizarTexto(searchInput?.value);
 
 
         cards.forEach(
             (card) => {
 
-                const nome =
-                    card.dataset.nome
-                        ? card.dataset.nome.toLowerCase()
-                        : "";
+                const nome = normalizarTexto(
+                    card.querySelector("h3")?.textContent
+                );
 
 
-                const categoria =
+                const categoria = normalizarTexto(
                     card.dataset.categoria
-                        ? card.dataset.categoria.toLowerCase()
-                        : "";
+                );
 
 
-                const texto =
-                    card.textContent.toLowerCase();
+                const texto = normalizarTexto(card.textContent);
 
 
                 const correspondeBusca =
@@ -2080,10 +2090,9 @@ async function excluirProduto(id_produto) {
                 );
 
 
-        const contador =
-            document.querySelector(
-                ".produtos-count strong"
-            );
+        const contador = document.querySelector(
+            ".catalogo-resultados strong"
+        );
 
 
         if (contador) {
