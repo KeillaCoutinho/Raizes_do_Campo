@@ -50,7 +50,7 @@ if (formContato) {
   }
 
   // Valida o formulário no envio
-  formContato.addEventListener("submit", (e) => {
+  formContato.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     let formularioValido = true;
@@ -109,6 +109,38 @@ if (formContato) {
     if (!formularioValido) {
       return;
     }
+
+    // Envio assíncrono para o backend
+    try {
+    const resposta = await fetch("http://localhost:3000/contato", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            nome: nome,
+            email: email,
+            mensagem: mensagem
+        })
+    });
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+        alert(resultado.erros.join("\n"));
+        return;
+    }
+
+    alert(resultado.mensagem);
+    formContato.reset();
+
+} catch (erro) {
+    console.error("Erro ao enviar formulário:", erro);
+
+    alert(
+        "Não foi possível enviar a mensagem. Verifique se o servidor está funcionando."
+    );
+}
 
     // Caso todos os campos estejam corretos
     alert("Mensagem enviada com sucesso!");
@@ -314,103 +346,4 @@ if (formContato) {
     showSlide(0);
     startSlideshow();
   }
-
-    // 7. Galeria de fotos com Lightbox
-  const galleryItems = document.querySelectorAll(".gallery-item");
-  const lightbox = document.getElementById("lightbox");
-  const lightboxImage = document.getElementById("lightboxImage");
-  const lightboxClose = document.querySelector(".lightbox-close");
-  const lightboxPrev = document.querySelector(".lightbox-prev");
-  const lightboxNext = document.querySelector(".lightbox-next");
-
-  if (galleryItems.length > 0 && lightbox && lightboxImage) {
-    let currentImage = 0;
-
-    // Abre a imagem selecionada
-    function openLightbox(index) {
-      const image = galleryItems[index].querySelector("img");
-
-      if (!image) return;
-
-      currentImage = index;
-      lightboxImage.src = image.src;
-      lightboxImage.alt = image.alt;
-
-      lightbox.classList.add("active");
-      lightbox.setAttribute("aria-hidden", "false");
-
-      // Impede a página de rolar enquanto a imagem está aberta
-      document.body.style.overflow = "hidden";
-    }
-
-    // Fecha a imagem ampliada
-    function closeLightbox() {
-      lightbox.classList.remove("active");
-      lightbox.setAttribute("aria-hidden", "true");
-
-      document.body.style.overflow = "";
-    }
-
-    // Mostra a imagem anterior
-    function showPreviousImage() {
-      currentImage =
-        (currentImage - 1 + galleryItems.length) % galleryItems.length;
-
-      openLightbox(currentImage);
-    }
-
-    // Mostra a próxima imagem
-    function showNextImage() {
-      currentImage =
-        (currentImage + 1) % galleryItems.length;
-
-      openLightbox(currentImage);
-    }
-
-    // Clique nas fotos
-    galleryItems.forEach((item, index) => {
-      item.addEventListener("click", () => {
-        openLightbox(index);
-      });
-    });
-
-    // Botão fechar
-    if (lightboxClose) {
-      lightboxClose.addEventListener("click", closeLightbox);
-    }
-
-    // Botões anterior e próximo
-    if (lightboxPrev) {
-      lightboxPrev.addEventListener("click", showPreviousImage);
-    }
-
-    if (lightboxNext) {
-      lightboxNext.addEventListener("click", showNextImage);
-    }
-
-    // Fecha ao clicar no fundo escuro
-    lightbox.addEventListener("click", (event) => {
-      if (event.target === lightbox) {
-        closeLightbox();
-      }
-    });
-
-    // Fecha com Esc e navega com as setas do teclado
-    document.addEventListener("keydown", (event) => {
-      if (!lightbox.classList.contains("active")) return;
-
-      if (event.key === "Escape") {
-        closeLightbox();
-      }
-
-      if (event.key === "ArrowLeft") {
-        showPreviousImage();
-      }
-
-      if (event.key === "ArrowRight") {
-        showNextImage();
-      }
-    });
-  }
-
 });
