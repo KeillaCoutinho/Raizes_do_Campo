@@ -160,16 +160,232 @@ if (formContato) {
   }
 
   // 4. Validação do formulário de Cadastro
-  if (formCadastro) {
-    formCadastro.addEventListener("submit", (e) => {
-      const senha = document.getElementById("cad-senha");
+if (formCadastro) {
 
-      if (senha && senha.value.length < 6) {
-        e.preventDefault();
-        alert("A senha deve ter no mínimo 6 caracteres.");
-      }
-    });
+  const nome = document.getElementById("cad-nome");
+  const email = document.getElementById("cad-email");
+  const senha = document.getElementById("cad-senha");
+  const confirmarSenha = document.getElementById("cad-confirmar-senha");
+
+  const erroNome = document.getElementById("erro-nome");
+  const erroEmail = document.getElementById("erro-email");
+  const erroSenha = document.getElementById("erro-senha");
+  const erroConfirmarSenha = document.getElementById("erro-confirmar-senha");
+
+  const mensagemSucesso = document.getElementById("cadastro-sucesso");
+
+
+  // Função para mostrar erro
+  function mostrarErro(campo, elementoErro, mensagem) {
+    campo.classList.add("input-invalido");
+    campo.classList.remove("input-valido");
+    elementoErro.textContent = mensagem;
   }
+
+
+  // Função para marcar campo como válido
+  function marcarValido(campo, elementoErro) {
+    campo.classList.remove("input-invalido");
+    campo.classList.add("input-valido");
+    elementoErro.textContent = "";
+  }
+
+
+  // Validação do nome
+  function validarNome() {
+
+    const valor = nome.value.trim();
+
+    if (valor === "") {
+      mostrarErro(
+        nome,
+        erroNome,
+        "Informe seu nome completo."
+      );
+      return false;
+    }
+
+    if (valor.length < 3) {
+      mostrarErro(
+        nome,
+        erroNome,
+        "O nome deve ter pelo menos 3 caracteres."
+      );
+      return false;
+    }
+
+    marcarValido(nome, erroNome);
+    return true;
+  }
+
+
+  // Validação do e-mail
+  function validarEmail() {
+
+    const valor = email.value.trim();
+
+    const emailValido =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (valor === "") {
+      mostrarErro(
+        email,
+        erroEmail,
+        "Informe seu e-mail."
+      );
+      return false;
+    }
+
+    if (!emailValido.test(valor)) {
+      mostrarErro(
+        email,
+        erroEmail,
+        "Digite um e-mail válido."
+      );
+      return false;
+    }
+
+    marcarValido(email, erroEmail);
+    return true;
+  }
+
+
+  // Validação da senha
+  function validarSenha() {
+
+    const valor = senha.value;
+
+    if (valor === "") {
+      mostrarErro(
+        senha,
+        erroSenha,
+        "Informe uma senha."
+      );
+      return false;
+    }
+
+    if (valor.length < 8) {
+      mostrarErro(
+        senha,
+        erroSenha,
+        "A senha deve ter pelo menos 8 caracteres."
+      );
+      return false;
+    }
+
+    if (!/[A-Za-z]/.test(valor)) {
+      mostrarErro(
+        senha,
+        erroSenha,
+        "A senha deve conter pelo menos uma letra."
+      );
+      return false;
+    }
+
+    if (!/[0-9]/.test(valor)) {
+      mostrarErro(
+        senha,
+        erroSenha,
+        "A senha deve conter pelo menos um número."
+      );
+      return false;
+    }
+
+    marcarValido(senha, erroSenha);
+    return true;
+  }
+
+
+  // Validação da confirmação da senha
+  function validarConfirmacao() {
+
+    const valor = confirmarSenha.value;
+
+    if (valor === "") {
+      mostrarErro(
+        confirmarSenha,
+        erroConfirmarSenha,
+        "Confirme sua senha."
+      );
+      return false;
+    }
+
+    if (valor !== senha.value) {
+      mostrarErro(
+        confirmarSenha,
+        erroConfirmarSenha,
+        "As senhas não coincidem."
+      );
+      return false;
+    }
+
+    marcarValido(
+      confirmarSenha,
+      erroConfirmarSenha
+    );
+
+    return true;
+  }
+
+
+  // Validação enquanto o usuário digita
+  nome.addEventListener("input", validarNome);
+  email.addEventListener("input", validarEmail);
+  senha.addEventListener("input", () => {
+    validarSenha();
+
+    if (confirmarSenha.value !== "") {
+      validarConfirmacao();
+    }
+  });
+
+  confirmarSenha.addEventListener(
+    "input",
+    validarConfirmacao
+  );
+
+
+  // Validação ao enviar o formulário
+  formCadastro.addEventListener("submit", (e) => {
+
+    e.preventDefault();
+
+    mensagemSucesso.textContent = "";
+
+    const nomeValido = validarNome();
+    const emailValido = validarEmail();
+    const senhaValida = validarSenha();
+    const confirmacaoValida = validarConfirmacao();
+
+
+    if (
+      nomeValido &&
+      emailValido &&
+      senhaValida &&
+      confirmacaoValida
+    ) {
+
+      mensagemSucesso.textContent =
+        "Cadastro preenchido corretamente!";
+
+      /*
+       * Futuramente, o backend será chamado aqui
+       * para salvar o usuário no PostgreSQL.
+       */
+
+    } else {
+
+      const primeiroErro =
+        formCadastro.querySelector(".input-invalido");
+
+      if (primeiroErro) {
+        primeiroErro.focus();
+      }
+    }
+
+  });
+
+}
 
     // 5. Scroll Reveal e Efeito Tilt nos Cards
 
