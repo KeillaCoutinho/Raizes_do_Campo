@@ -2384,3 +2384,164 @@ select:focus {
     font-size: 0.85rem;
     font-weight: 600;
 }
+
+/* =====================================================
+   VALIDAÇÃO DO CADASTRO
+===================================================== */
+
+.erro-campo {
+    display: block;
+    min-height: 18px;
+    margin-top: 4px;
+    color: #ff8d8d;
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+.input-invalido {
+    border-color: #e66b6b !important;
+    box-shadow: 0 0 0 3px rgba(230, 107, 107, 0.12) !important;
+}
+
+.input-valido {
+    border-color: #78bd6c !important;
+    box-shadow: 0 0 0 3px rgba(120, 189, 108, 0.10) !important;
+}
+
+.mensagem-sucesso {
+    margin: 12px 0 0;
+    color: #9cd88c;
+    font-size: 0.85rem;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   LIGHTBOX - GALERIA
+   ========================================================= */
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    background: rgba(0, 0, 0, 0.9);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity 0.3s ease,
+                visibility 0.3s ease;
+}
+
+.lightbox.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.lightbox-image {
+    max-width: 85%;
+    max-height: 85vh;
+
+    object-fit: contain;
+
+    border-radius: 10px;
+
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+
+    color: white;
+
+    cursor: pointer;
+
+    width: 45px;
+    height: 45px;
+
+    border-radius: 50%;
+
+    font-size: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background: rgba(255, 255, 255, 0.3);
+
+    transform: scale(1.08);
+}
+
+.lightbox-close {
+    top: 25px;
+    right: 25px;
+}
+
+.lightbox-prev {
+    left: 25px;
+}
+
+.lightbox-next {
+    right: 25px;
+}
+
+.gallery-item {
+    cursor: pointer;
+    border: none;
+}
+
+.gallery-item img {
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.03);
+}
+
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 768px) {
+
+    .lightbox {
+        padding: 15px;
+    }
+
+    .lightbox-image {
+        max-width: 95%;
+        max-height: 75vh;
+    }
+
+    .lightbox-prev {
+        left: 10px;
+    }
+
+    .lightbox-next {
+        right: 10px;
+    }
+
+    .lightbox-close {
+        top: 15px;
+        right: 15px;
+    }
+
+}

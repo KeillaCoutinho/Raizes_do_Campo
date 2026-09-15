@@ -191,6 +191,7 @@ if (formContato) {
     });
   }
 
+<<<<<<< HEAD
 
     // 4. Login do usuário
   if (formLogin) {
@@ -282,6 +283,316 @@ if (formCadastro) {
   });
 }
 
+=======
+  // 4. Validação do formulário de Cadastro
+if (formCadastro) {
+
+  const nome = document.getElementById("cad-nome");
+  const email = document.getElementById("cad-email");
+  const senha = document.getElementById("cad-senha");
+  const confirmarSenha = document.getElementById("cad-confirmar-senha");
+
+  const erroNome = document.getElementById("erro-nome");
+  const erroEmail = document.getElementById("erro-email");
+  const erroSenha = document.getElementById("erro-senha");
+  const erroConfirmarSenha = document.getElementById("erro-confirmar-senha");
+
+  const mensagemSucesso = document.getElementById("cadastro-sucesso");
+
+
+  // Função para mostrar erro
+  function mostrarErro(campo, elementoErro, mensagem) {
+    campo.classList.add("input-invalido");
+    campo.classList.remove("input-valido");
+    elementoErro.textContent = mensagem;
+  }
+
+
+  // Função para marcar campo como válido
+  function marcarValido(campo, elementoErro) {
+    campo.classList.remove("input-invalido");
+    campo.classList.add("input-valido");
+    elementoErro.textContent = "";
+  }
+
+
+  // Validação do nome
+  function validarNome() {
+
+    const valor = nome.value.trim();
+
+    if (valor === "") {
+      mostrarErro(
+        nome,
+        erroNome,
+        "Informe seu nome completo."
+      );
+      return false;
+    }
+
+    if (valor.length < 3) {
+      mostrarErro(
+        nome,
+        erroNome,
+        "O nome deve ter pelo menos 3 caracteres."
+      );
+      return false;
+    }
+
+    marcarValido(nome, erroNome);
+    return true;
+  }
+
+
+  // Validação do e-mail
+  function validarEmail() {
+
+    const valor = email.value.trim();
+
+    const emailValido =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (valor === "") {
+      mostrarErro(
+        email,
+        erroEmail,
+        "Informe seu e-mail."
+      );
+      return false;
+    }
+
+    if (!emailValido.test(valor)) {
+      mostrarErro(
+        email,
+        erroEmail,
+        "Digite um e-mail válido."
+      );
+      return false;
+    }
+
+    marcarValido(email, erroEmail);
+    return true;
+  }
+
+
+  // Validação da senha
+  function validarSenha() {
+
+    const valor = senha.value;
+
+    if (valor === "") {
+      mostrarErro(
+        senha,
+        erroSenha,
+        "Informe uma senha."
+      );
+      return false;
+    }
+
+    if (valor.length < 8) {
+      mostrarErro(
+        senha,
+        erroSenha,
+        "A senha deve ter pelo menos 8 caracteres."
+      );
+      return false;
+    }
+
+    if (!/[A-Za-z]/.test(valor)) {
+      mostrarErro(
+        senha,
+        erroSenha,
+        "A senha deve conter pelo menos uma letra."
+      );
+      return false;
+    }
+
+    if (!/[0-9]/.test(valor)) {
+      mostrarErro(
+        senha,
+        erroSenha,
+        "A senha deve conter pelo menos um número."
+      );
+      return false;
+    }
+
+    marcarValido(senha, erroSenha);
+    return true;
+  }
+
+
+  // Validação da confirmação da senha
+  function validarConfirmacao() {
+
+    const valor = confirmarSenha.value;
+
+    if (valor === "") {
+      mostrarErro(
+        confirmarSenha,
+        erroConfirmarSenha,
+        "Confirme sua senha."
+      );
+      return false;
+    }
+
+    if (valor !== senha.value) {
+      mostrarErro(
+        confirmarSenha,
+        erroConfirmarSenha,
+        "As senhas não coincidem."
+      );
+      return false;
+    }
+
+    marcarValido(
+      confirmarSenha,
+      erroConfirmarSenha
+    );
+
+    return true;
+  }
+
+
+  // Validação enquanto o usuário digita
+  nome.addEventListener("input", validarNome);
+  email.addEventListener("input", validarEmail);
+  senha.addEventListener("input", () => {
+    validarSenha();
+
+    if (confirmarSenha.value !== "") {
+      validarConfirmacao();
+    }
+  });
+
+  confirmarSenha.addEventListener(
+    "input",
+    validarConfirmacao
+  );
+
+
+  // Validação ao enviar o formulário
+  formCadastro.addEventListener("submit", (e) => {
+
+    e.preventDefault();
+
+    mensagemSucesso.textContent = "";
+
+    const nomeValido = validarNome();
+    const emailValido = validarEmail();
+    const senhaValida = validarSenha();
+    const confirmacaoValida = validarConfirmacao();
+
+
+    if (
+      nomeValido &&
+      emailValido &&
+      senhaValida &&
+      confirmacaoValida
+    ) {
+
+      mensagemSucesso.textContent =
+        "Cadastro preenchido corretamente!";
+
+      /*
+       * Futuramente, o backend será chamado aqui
+       * para salvar o usuário no PostgreSQL.
+       */
+
+    } else {
+
+      const primeiroErro =
+        formCadastro.querySelector(".input-invalido");
+
+      if (primeiroErro) {
+        primeiroErro.focus();
+      }
+    }
+
+  });
+
+}
+
+  // 5. Filtros do catálogo de produtos
+  const filtrosProdutos = document.querySelectorAll(".filtro");
+  const cardsProdutos = document.querySelectorAll(".produto-card");
+  const contadorProdutos = document.querySelector(".catalogo-resultados strong");
+  const buscaProduto = document.getElementById("buscarProduto");
+  const ordenarProdutos = document.getElementById("ordenarProdutos");
+  const gradeProdutos = document.querySelector(".produtos-grid");
+  const ordemOriginal = Array.from(cardsProdutos);
+  let categoriaAtual = "todos";
+
+  if (filtrosProdutos.length > 0 && cardsProdutos.length > 0) {
+    function atualizarProdutos() {
+      const termoBusca = buscaProduto
+        ? buscaProduto.value.trim().toLocaleLowerCase("pt-BR")
+        : "";
+      let produtosVisiveis = 0;
+
+      cardsProdutos.forEach((card) => {
+        const textoCard = card.textContent.toLocaleLowerCase("pt-BR");
+        const correspondeCategoria =
+          categoriaAtual === "todos" ||
+          card.dataset.categoria === categoriaAtual;
+        const correspondeBusca =
+          termoBusca === "" ||
+          card.dataset.nome.toLocaleLowerCase("pt-BR").includes(termoBusca) ||
+          textoCard.includes(termoBusca);
+        const corresponde = correspondeCategoria && correspondeBusca;
+
+        card.hidden = !corresponde;
+
+        if (corresponde) {
+          produtosVisiveis += 1;
+        }
+      });
+
+      if (contadorProdutos) {
+        contadorProdutos.textContent = produtosVisiveis;
+      }
+    }
+
+    filtrosProdutos.forEach((filtro) => {
+      filtro.addEventListener("click", () => {
+        filtrosProdutos.forEach((item) => item.classList.remove("active"));
+        filtro.classList.add("active");
+        categoriaAtual = filtro.dataset.categoria;
+        atualizarProdutos();
+      });
+    });
+
+    if (buscaProduto) {
+      buscaProduto.addEventListener("input", atualizarProdutos);
+    }
+
+    if (ordenarProdutos && gradeProdutos) {
+      ordenarProdutos.addEventListener("change", () => {
+        const criterio = ordenarProdutos.value;
+        const cardsOrdenados = Array.from(cardsProdutos);
+
+        if (criterio === "original") {
+          cardsOrdenados.splice(0, cardsOrdenados.length, ...ordemOriginal);
+        } else if (criterio === "nome") {
+          cardsOrdenados.sort((cardA, cardB) =>
+            cardA.dataset.nome.localeCompare(cardB.dataset.nome, "pt-BR")
+          );
+        } else if (criterio === "menor-preco") {
+          cardsOrdenados.sort(
+            (cardA, cardB) =>
+              Number(cardA.dataset.preco) - Number(cardB.dataset.preco)
+          );
+        } else if (criterio === "maior-preco") {
+          cardsOrdenados.sort(
+            (cardA, cardB) =>
+              Number(cardB.dataset.preco) - Number(cardA.dataset.preco)
+          );
+        }
+
+        cardsOrdenados.forEach((card) => gradeProdutos.appendChild(card));
+      });
+    }
+  }
+>>>>>>> origin/main
 
     // 6. Scroll Reveal e Efeito Tilt nos Cards
 
@@ -344,7 +655,70 @@ if (formCadastro) {
     });
   }
 
-  // 6. Slideshow da página inicial
+  // 7. Galeria e lightbox da página Sobre
+  const galleryItems = document.querySelectorAll(".gallery-item");
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImage = document.getElementById("lightboxImage");
+  const lightboxClose = document.querySelector(".lightbox-close");
+  const lightboxPrevious = document.querySelector(".lightbox-prev");
+  const lightboxNext = document.querySelector(".lightbox-next");
+
+  if (
+    galleryItems.length > 0 &&
+    lightbox &&
+    lightboxImage &&
+    lightboxClose &&
+    lightboxPrevious &&
+    lightboxNext
+  ) {
+    let imagemAtual = 0;
+
+    function mostrarImagem(indice) {
+      imagemAtual = (indice + galleryItems.length) % galleryItems.length;
+      const imagem = galleryItems[imagemAtual].querySelector("img");
+
+      lightboxImage.src = imagem.src;
+      lightboxImage.alt = imagem.alt;
+    }
+
+    function abrirLightbox(indice) {
+      mostrarImagem(indice);
+      lightbox.classList.add("active");
+      lightbox.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      lightboxClose.focus();
+    }
+
+    function fecharLightbox() {
+      lightbox.classList.remove("active");
+      lightbox.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    galleryItems.forEach((item, indice) => {
+      item.addEventListener("click", () => abrirLightbox(indice));
+    });
+
+    lightboxClose.addEventListener("click", fecharLightbox);
+    lightboxPrevious.addEventListener("click", () => mostrarImagem(imagemAtual - 1));
+    lightboxNext.addEventListener("click", () => mostrarImagem(imagemAtual + 1));
+
+    lightbox.addEventListener("click", (evento) => {
+      if (evento.target === lightbox) {
+        fecharLightbox();
+      }
+    });
+
+    document.addEventListener("keydown", (evento) => {
+      if (!lightbox.classList.contains("active")) return;
+
+      if (evento.key === "Escape") fecharLightbox();
+      if (evento.key === "ArrowLeft") mostrarImagem(imagemAtual - 1);
+      if (evento.key === "ArrowRight") mostrarImagem(imagemAtual + 1);
+    });
+  }
+
+  // 8. Slideshow da página inicial
   const slides = document.querySelectorAll(".slide");
   const dots = document.querySelectorAll(".dot");
   const prevBtn = document.querySelector(".slide-btn.prev");
@@ -426,4 +800,296 @@ if (formCadastro) {
     showSlide(0);
     startSlideshow();
   }
+});
+
+/* =========================================================
+   GALERIA DE FOTOS - LIGHTBOX
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const galleryItems = document.querySelectorAll(".gallery-item");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightboxImage");
+    const lightboxClose = document.querySelector(".lightbox-close");
+    const lightboxPrev = document.querySelector(".lightbox-prev");
+    const lightboxNext = document.querySelector(".lightbox-next");
+
+    let currentImage = 0;
+
+    if (galleryItems.length > 0 && lightbox) {
+
+        function showImage(index) {
+
+            currentImage =
+                (index + galleryItems.length) % galleryItems.length;
+
+            const image =
+                galleryItems[currentImage].querySelector("img");
+
+            lightboxImage.src = image.src;
+            lightboxImage.alt = image.alt;
+
+            lightbox.classList.add("active");
+            lightbox.setAttribute("aria-hidden", "false");
+
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeLightbox() {
+
+            lightbox.classList.remove("active");
+            lightbox.setAttribute("aria-hidden", "true");
+
+            document.body.style.overflow = "";
+        }
+
+        galleryItems.forEach(function (item, index) {
+
+            item.addEventListener("click", function () {
+                showImage(index);
+            });
+
+        });
+
+        if (lightboxClose) {
+            lightboxClose.addEventListener("click", closeLightbox);
+        }
+
+        if (lightboxPrev) {
+            lightboxPrev.addEventListener("click", function () {
+                showImage(currentImage - 1);
+            });
+        }
+
+        if (lightboxNext) {
+            lightboxNext.addEventListener("click", function () {
+                showImage(currentImage + 1);
+            });
+        }
+
+        lightbox.addEventListener("click", function (event) {
+
+            if (event.target === lightbox) {
+                closeLightbox();
+            }
+
+        });
+
+        document.addEventListener("keydown", function (event) {
+
+            if (!lightbox.classList.contains("active")) {
+                return;
+            }
+
+            if (event.key === "Escape") {
+                closeLightbox();
+            }
+
+            if (event.key === "ArrowLeft") {
+                showImage(currentImage - 1);
+            }
+
+            if (event.key === "ArrowRight") {
+                showImage(currentImage + 1);
+            }
+
+        });
+
+    }
+
+});
+
+/* =========================================================
+   BUSCA, FILTRO E ORDENAÇÃO DE PRODUTOS
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const productGrid = document.querySelector(".produtos-grid");
+    const searchInput = document.getElementById("buscarProduto");
+    const sortSelect = document.getElementById("ordenarProdutos");
+    const filterButtons = document.querySelectorAll(".filtro");
+
+    if (!productGrid) {
+        return;
+    }
+
+    let categoriaAtual = "todos";
+
+    function atualizarProdutos() {
+
+        const cards = Array.from(
+            productGrid.querySelectorAll(".produto-card")
+        );
+
+        const termo =
+            searchInput
+                ? searchInput.value.toLowerCase().trim()
+                : "";
+
+        cards.forEach(function (card) {
+
+            const nome =
+                card.dataset.nome?.toLowerCase() || "";
+
+            const categoria =
+                card.dataset.categoria?.toLowerCase() || "";
+
+            const texto =
+                card.textContent.toLowerCase();
+
+            const correspondeBusca =
+                nome.includes(termo) ||
+                texto.includes(termo);
+
+            const correspondeCategoria =
+                categoriaAtual === "todos" ||
+                categoria === categoriaAtual;
+
+            if (correspondeBusca && correspondeCategoria) {
+
+                card.style.display = "";
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+        ordenarProdutos();
+
+        atualizarContador();
+
+    }
+
+
+    function ordenarProdutos() {
+
+        const cards = Array.from(
+            productGrid.querySelectorAll(".produto-card")
+        );
+
+        const ordem = sortSelect
+            ? sortSelect.value
+            : "original";
+
+        if (ordem === "nome") {
+
+            cards.sort(function (a, b) {
+
+                const nomeA = a.dataset.nome.toLowerCase();
+                const nomeB = b.dataset.nome.toLowerCase();
+
+                return nomeA.localeCompare(nomeB);
+
+            });
+
+        }
+
+        if (ordem === "menor-preco") {
+
+            cards.sort(function (a, b) {
+
+                return (
+                    parseFloat(a.dataset.preco) -
+                    parseFloat(b.dataset.preco)
+                );
+
+            });
+
+        }
+
+        if (ordem === "maior-preco") {
+
+            cards.sort(function (a, b) {
+
+                return (
+                    parseFloat(b.dataset.preco) -
+                    parseFloat(a.dataset.preco)
+                );
+
+            });
+
+        }
+
+        cards.forEach(function (card) {
+
+            productGrid.appendChild(card);
+
+        });
+
+    }
+
+
+    function atualizarContador() {
+
+        const cards =
+            productGrid.querySelectorAll(".produto-card");
+
+        const visiveis =
+            Array.from(cards).filter(function (card) {
+
+                return card.style.display !== "none";
+
+            });
+
+        const contador =
+            document.querySelector(".produtos-count strong");
+
+        if (contador) {
+
+            contador.textContent = visiveis.length;
+
+        }
+
+    }
+
+
+    /* BUSCA */
+
+    if (searchInput) {
+
+        searchInput.addEventListener("input", atualizarProdutos);
+
+    }
+
+
+    /* ORDENAÇÃO */
+
+    if (sortSelect) {
+
+        sortSelect.addEventListener("change", atualizarProdutos);
+
+    }
+
+
+    /* FILTROS */
+
+    filterButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            categoriaAtual =
+                button.dataset.categoria;
+
+            filterButtons.forEach(function (btn) {
+
+                btn.classList.remove("active");
+
+            });
+
+            button.classList.add("active");
+
+            atualizarProdutos();
+
+        });
+
+    });
+
+
+    atualizarProdutos();
+
 });
