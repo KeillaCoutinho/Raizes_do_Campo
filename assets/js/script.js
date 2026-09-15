@@ -707,3 +707,295 @@ if (formCadastro) {
     startSlideshow();
   }
 });
+
+/* =========================================================
+   GALERIA DE FOTOS - LIGHTBOX
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const galleryItems = document.querySelectorAll(".gallery-item");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightboxImage");
+    const lightboxClose = document.querySelector(".lightbox-close");
+    const lightboxPrev = document.querySelector(".lightbox-prev");
+    const lightboxNext = document.querySelector(".lightbox-next");
+
+    let currentImage = 0;
+
+    if (galleryItems.length > 0 && lightbox) {
+
+        function showImage(index) {
+
+            currentImage =
+                (index + galleryItems.length) % galleryItems.length;
+
+            const image =
+                galleryItems[currentImage].querySelector("img");
+
+            lightboxImage.src = image.src;
+            lightboxImage.alt = image.alt;
+
+            lightbox.classList.add("active");
+            lightbox.setAttribute("aria-hidden", "false");
+
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeLightbox() {
+
+            lightbox.classList.remove("active");
+            lightbox.setAttribute("aria-hidden", "true");
+
+            document.body.style.overflow = "";
+        }
+
+        galleryItems.forEach(function (item, index) {
+
+            item.addEventListener("click", function () {
+                showImage(index);
+            });
+
+        });
+
+        if (lightboxClose) {
+            lightboxClose.addEventListener("click", closeLightbox);
+        }
+
+        if (lightboxPrev) {
+            lightboxPrev.addEventListener("click", function () {
+                showImage(currentImage - 1);
+            });
+        }
+
+        if (lightboxNext) {
+            lightboxNext.addEventListener("click", function () {
+                showImage(currentImage + 1);
+            });
+        }
+
+        lightbox.addEventListener("click", function (event) {
+
+            if (event.target === lightbox) {
+                closeLightbox();
+            }
+
+        });
+
+        document.addEventListener("keydown", function (event) {
+
+            if (!lightbox.classList.contains("active")) {
+                return;
+            }
+
+            if (event.key === "Escape") {
+                closeLightbox();
+            }
+
+            if (event.key === "ArrowLeft") {
+                showImage(currentImage - 1);
+            }
+
+            if (event.key === "ArrowRight") {
+                showImage(currentImage + 1);
+            }
+
+        });
+
+    }
+
+});
+
+/* =========================================================
+   BUSCA, FILTRO E ORDENAÇÃO DE PRODUTOS
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const productGrid = document.querySelector(".produtos-grid");
+    const searchInput = document.getElementById("buscarProduto");
+    const sortSelect = document.getElementById("ordenarProdutos");
+    const filterButtons = document.querySelectorAll(".filtro");
+
+    if (!productGrid) {
+        return;
+    }
+
+    let categoriaAtual = "todos";
+
+    function atualizarProdutos() {
+
+        const cards = Array.from(
+            productGrid.querySelectorAll(".produto-card")
+        );
+
+        const termo =
+            searchInput
+                ? searchInput.value.toLowerCase().trim()
+                : "";
+
+        cards.forEach(function (card) {
+
+            const nome =
+                card.dataset.nome?.toLowerCase() || "";
+
+            const categoria =
+                card.dataset.categoria?.toLowerCase() || "";
+
+            const texto =
+                card.textContent.toLowerCase();
+
+            const correspondeBusca =
+                nome.includes(termo) ||
+                texto.includes(termo);
+
+            const correspondeCategoria =
+                categoriaAtual === "todos" ||
+                categoria === categoriaAtual;
+
+            if (correspondeBusca && correspondeCategoria) {
+
+                card.style.display = "";
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+        ordenarProdutos();
+
+        atualizarContador();
+
+    }
+
+
+    function ordenarProdutos() {
+
+        const cards = Array.from(
+            productGrid.querySelectorAll(".produto-card")
+        );
+
+        const ordem = sortSelect
+            ? sortSelect.value
+            : "original";
+
+        if (ordem === "nome") {
+
+            cards.sort(function (a, b) {
+
+                const nomeA = a.dataset.nome.toLowerCase();
+                const nomeB = b.dataset.nome.toLowerCase();
+
+                return nomeA.localeCompare(nomeB);
+
+            });
+
+        }
+
+        if (ordem === "menor-preco") {
+
+            cards.sort(function (a, b) {
+
+                return (
+                    parseFloat(a.dataset.preco) -
+                    parseFloat(b.dataset.preco)
+                );
+
+            });
+
+        }
+
+        if (ordem === "maior-preco") {
+
+            cards.sort(function (a, b) {
+
+                return (
+                    parseFloat(b.dataset.preco) -
+                    parseFloat(a.dataset.preco)
+                );
+
+            });
+
+        }
+
+        cards.forEach(function (card) {
+
+            productGrid.appendChild(card);
+
+        });
+
+    }
+
+
+    function atualizarContador() {
+
+        const cards =
+            productGrid.querySelectorAll(".produto-card");
+
+        const visiveis =
+            Array.from(cards).filter(function (card) {
+
+                return card.style.display !== "none";
+
+            });
+
+        const contador =
+            document.querySelector(".produtos-count strong");
+
+        if (contador) {
+
+            contador.textContent = visiveis.length;
+
+        }
+
+    }
+
+
+    /* BUSCA */
+
+    if (searchInput) {
+
+        searchInput.addEventListener("input", atualizarProdutos);
+
+    }
+
+
+    /* ORDENAÇÃO */
+
+    if (sortSelect) {
+
+        sortSelect.addEventListener("change", atualizarProdutos);
+
+    }
+
+
+    /* FILTROS */
+
+    filterButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            categoriaAtual =
+                button.dataset.categoria;
+
+            filterButtons.forEach(function (btn) {
+
+                btn.classList.remove("active");
+
+            });
+
+            button.classList.add("active");
+
+            atualizarProdutos();
+
+        });
+
+    });
+
+
+    atualizarProdutos();
+
+});
