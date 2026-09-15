@@ -50,6 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         headers: {
                             "Content-Type": "application/json"
                         },
+
+                        // Envia o cookie da sessão
+                        credentials: "include",
+
                         body: JSON.stringify({
                             id_categoria: Number(categoria),
                             nome: titulo,
@@ -95,25 +99,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ==========================================
-    // 3. CARREGAR PRODUTOS
+    // 3. CARREGAR MEUS PRODUTOS
     // ==========================================
 
     async function carregarProdutos() {
         try {
             const resposta = await fetch(
-                "http://127.0.0.1:3000/produtos"
+                "http://127.0.0.1:3000/meus-produtos",
+                {
+                    method: "GET",
+
+                    // Envia o cookie da sessão
+                    credentials: "include"
+                }
             );
 
             if (!resposta.ok) {
+                const resultado = await resposta.json();
+
                 throw new Error(
-                    "Erro ao buscar produtos."
+                    resultado.erro ||
+                    "Erro ao buscar seus produtos."
                 );
             }
 
             const produtos = await resposta.json();
 
             console.log(
-                "Produtos recebidos da API:",
+                "Meus produtos recebidos da API:",
                 produtos
             );
 
@@ -129,7 +142,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // Limpa a tabela antes de preencher
             listaItens.innerHTML = "";
 
-            // Percorre todos os produtos recebidos
+            // Percorre somente os produtos
+            // pertencentes ao produtor logado
             produtos.forEach((produto) => {
 
                 const linha =
@@ -174,9 +188,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } catch (erro) {
             console.error(
-                "Erro ao carregar produtos:",
+                "Erro ao carregar meus produtos:",
                 erro
             );
+
+            const listaItens =
+                document.getElementById("lista-itens");
+
+            if (listaItens) {
+                listaItens.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            Não foi possível carregar seus produtos.
+                        </td>
+                    </tr>
+                `;
+            }
         }
     }
 
@@ -397,7 +424,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     formContato.reset();
 
-
                 } catch (erro) {
 
                     console.error(
@@ -590,6 +616,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                         "application/json"
                                 },
 
+                                // Permite receber e salvar
+                                // o cookie da sessão
                                 credentials: "include",
 
                                 body: JSON.stringify({
@@ -891,6 +919,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             "Meu Perfil";
                     }
                 }
+
             })
 
 
