@@ -75,6 +75,42 @@ async function buscarProdutorPorId(id_produtor) {
     return resultado.rows[0];
 }
 
+async function deletarProdutor(id_produtor) {
+    const cliente = await pool.connect();
+
+    try {
+        await cliente.query('BEGIN');
+
+        await cliente.query(
+            `DELETE FROM registro_producao
+             WHERE id_produtor = $1;`,
+            [id_produtor]
+        );
+
+        await cliente.query(
+            `DELETE FROM produto
+             WHERE id_produtor = $1;`,
+            [id_produtor]
+        );
+
+        const resultado = await cliente.query(
+            `DELETE FROM produtor
+             WHERE id_produtor = $1
+             RETURNING id_produtor, nome, email, telefone, tipo_produtor;`,
+            [id_produtor]
+        );
+
+        await cliente.query('COMMIT');
+
+        return resultado.rows[0];
+    } catch (erro) {
+        await cliente.query('ROLLBACK');
+        throw erro;
+    } finally {
+        cliente.release();
+    }
+}
+
 async function criarProdutor(
     id_localizacao,
     nome,
@@ -105,6 +141,7 @@ async function criarProdutor(
 module.exports = {
     buscarProdutorPorEmail,
     buscarProdutorPorId,
+    deletarProdutor,
     criarProdutor,
     buscarResumoProducao,
     salvarRegistroProducao

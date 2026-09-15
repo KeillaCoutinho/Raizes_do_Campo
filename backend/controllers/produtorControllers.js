@@ -138,8 +138,39 @@ async function registrarProducao(req, res) {
     }
 }
 
+async function deletarProdutor(req, res) {
+    try {
+        const { id } = req.params;
+
+        const produtor = await produtorModel.deletarProdutor(id);
+
+        if (!produtor) {
+            return res.status(404).json({
+                erro: 'Produtor não encontrado'
+            });
+        }
+
+        req.session.destroy((erro) => {
+            if (erro) {
+                console.error('ERRO AO ENCERRAR SESSÃO DO PRODUTOR:', erro);
+            }
+        });
+
+        res.json({
+            mensagem: 'Produtor deletado com sucesso!',
+            produtor
+        });
+    } catch (erro) {
+        console.error('ERRO AO DELETAR PRODUTOR:', erro);
+        res.status(500).json({
+            erro: 'Erro ao deletar produtor'
+        });
+    }
+}
+
 module.exports = {
     cadastrarProdutor,
     buscarResumoProducao,
-    registrarProducao
+    registrarProducao,
+    deletarProdutor
 };

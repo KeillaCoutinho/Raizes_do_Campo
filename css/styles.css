@@ -856,6 +856,30 @@ footer::before {
   cursor: pointer;
   border-radius: 4px;
 }
+
+.perfil-acoes {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-danger {
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #d93b3b, #b32828);
+  color: #fff;
+  padding: 12px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 24px rgba(185, 47, 47, 0.2);
+}
+
+.btn-danger:hover,
+.btn-danger:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(185, 47, 47, 0.28);
+}
 /* ==========================================================================
    Autenticação (Login e Cadastro) & Painel do Usuário (Dashboard / CRUD)
    ========================================================================== */

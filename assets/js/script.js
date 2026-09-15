@@ -1275,6 +1275,58 @@ async function excluirProduto(id_produto) {
     const tituloPainel =
         document.getElementById("titulo-painel");
 
+    const botaoExcluirConta =
+        document.getElementById("btn-excluir-conta");
+
+    async function excluirMinhaConta() {
+        const confirmar = confirm(
+            "Tem certeza que deseja excluir sua conta? Essa ação não pode ser desfeita."
+        );
+
+        if (!confirmar) {
+            return;
+        }
+
+        try {
+            const idUsuario = window.__perfilUsuarioId;
+            const tipoUsuario = window.__perfilTipoUsuario;
+
+            if (!idUsuario || !tipoUsuario) {
+                alert("Não foi possível identificar o usuário logado.");
+                return;
+            }
+
+            const rota = tipoUsuario === "produtor"
+                ? `${apiUrl}/produtores/${idUsuario}`
+                : `${apiUrl}/consumidores/${idUsuario}`;
+
+            const resposta = await fetch(rota, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            const resultado = await resposta.json().catch(() => ({}));
+
+            if (!resposta.ok) {
+                throw new Error(resultado.erro || "Erro ao excluir conta.");
+            }
+
+            await fetch(`${apiUrl}/logout`, {
+                method: "POST",
+                credentials: "include"
+            }).catch(() => {});
+
+            alert("Sua conta foi excluída com sucesso.");
+            window.location.href = "login.html";
+        } catch (erro) {
+            console.error("Erro ao excluir conta:", erro);
+            alert(erro.message || "Não foi possível excluir a conta.");
+        }
+    }
+
+    if (botaoExcluirConta) {
+        botaoExcluirConta.addEventListener("click", excluirMinhaConta);
+    }
 
     if (userName && userEmail) {
 
@@ -1299,6 +1351,8 @@ async function excluirProduto(id_produto) {
                     );
                 }
 
+                window.__perfilUsuarioId = resultado.id_consumidor ?? resultado.id_produtor;
+                window.__perfilTipoUsuario = resultado.tipoUsuario;
 
                 // Mostra os dados do usuário
                 userName.textContent =
@@ -1369,6 +1423,10 @@ async function excluirProduto(id_produto) {
                 userEmail.textContent =
                     "Não foi possível carregar";
 
+                if (botaoExcluirConta) {
+                    botaoExcluirConta.disabled = true;
+                    botaoExcluirConta.title = "Perfil indisponível";
+                }
 
                 // Esconde área de produtor
                 if (areaProdutor) {
