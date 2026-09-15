@@ -47,22 +47,88 @@
       </form>
 
       <!-- Formulário de Cadastro -->
-      <form id="form-cadastro" class="auth-form hidden">
-        <h2>Crie uma conta</h2>
-        <div class="input-group">
-          <label for="cad-nome">Nome Completo</label>
-          <input type="text" id="cad-nome" required placeholder="Seu nome">
-        </div>
-        <div class="input-group">
-          <label for="cad-email">E-mail</label>
-          <input type="email" id="cad-email" required placeholder="seu@email.com">
-        </div>
-        <div class="input-group">
-          <label for="cad-senha">Senha</label>
-          <input type="password" id="cad-senha" required placeholder="******">
-        </div>
-        <button type="submit" class="btn-primary">Cadastrar</button>
-      </form>
+      <form id="form-cadastro" class="auth-form hidden" novalidate>
+
+  <h2>Crie uma conta</h2>
+
+  <div class="input-group">
+    <label for="cad-nome">Nome Completo</label>
+
+    <input
+      type="text"
+      id="cad-nome"
+      name="nome"
+      required
+      minlength="3"
+      autocomplete="name"
+      placeholder="Seu nome"
+    >
+
+    <small class="erro-campo" id="erro-nome"></small>
+  </div>
+
+
+  <div class="input-group">
+    <label for="cad-email">E-mail</label>
+
+    <input
+      type="email"
+      id="cad-email"
+      name="email"
+      required
+      autocomplete="email"
+      placeholder="seu@email.com"
+    >
+
+    <small class="erro-campo" id="erro-email"></small>
+  </div>
+
+
+  <div class="input-group">
+    <label for="cad-senha">Senha</label>
+
+    <input
+      type="password"
+      id="cad-senha"
+      name="senha"
+      required
+      minlength="8"
+      autocomplete="new-password"
+      placeholder="Mínimo de 8 caracteres"
+    >
+
+    <small class="erro-campo" id="erro-senha"></small>
+  </div>
+
+
+  <div class="input-group">
+    <label for="cad-confirmar-senha">Confirmar senha</label>
+
+    <input
+      type="password"
+      id="cad-confirmar-senha"
+      name="confirmarSenha"
+      required
+      autocomplete="new-password"
+      placeholder="Digite a senha novamente"
+    >
+
+    <small class="erro-campo" id="erro-confirmar-senha"></small>
+  </div>
+
+
+  <button type="submit" class="btn-primary">
+    Cadastrar
+  </button>
+
+  <p
+    id="cadastro-sucesso"
+    class="mensagem-sucesso"
+    role="status"
+    aria-live="polite"
+  ></p>
+
+</form>
     </div>
   </main>
 
