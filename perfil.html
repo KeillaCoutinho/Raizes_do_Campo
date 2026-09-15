@@ -100,6 +100,158 @@
         </tbody>
       </table>
     </section>
+
+        <!-- ==============================
+         RELATÓRIO / INDICADORES
+    =============================== -->
+    <section class="card-dashboard relatorio-dashboard">
+
+      <div class="relatorio-header">
+        <div>
+          <span class="relatorio-tag">📊 Visão geral</span>
+          <h2>Meu Relatório</h2>
+          <p>
+            Acompanhe os principais dados dos seus produtos,
+            categorias e registros de produção.
+          </p>
+        </div>
+
+        <div class="relatorio-status">
+          <span>Dados do sistema</span>
+          <strong id="relatorio-status">
+            Aguardando dados...
+          </strong>
+        </div>
+      </div>
+
+
+      <!-- Indicadores -->
+      <div class="relatorio-indicadores">
+
+        <div class="relatorio-indicador">
+          <div class="relatorio-icone">🌾</div>
+
+          <div>
+            <span>Produtos cadastrados</span>
+            <strong id="relatorio-produtos">—</strong>
+          </div>
+        </div>
+
+
+        <div class="relatorio-indicador">
+          <div class="relatorio-icone">🗂️</div>
+
+          <div>
+            <span>Categorias utilizadas</span>
+            <strong id="relatorio-categorias">—</strong>
+          </div>
+        </div>
+
+
+        <div class="relatorio-indicador">
+          <div class="relatorio-icone">📦</div>
+
+          <div>
+            <span>Produção registrada</span>
+            <strong id="relatorio-producao">—</strong>
+          </div>
+        </div>
+
+
+        <div class="relatorio-indicador">
+          <div class="relatorio-icone">💰</div>
+
+          <div>
+            <span>Valor médio dos produtos</span>
+            <strong id="relatorio-preco-medio">—</strong>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- Dados por categoria -->
+      <div class="relatorio-detalhes">
+
+        <div class="relatorio-bloco">
+
+          <div class="relatorio-bloco-header">
+            <div>
+              <span class="card-kicker">Categorias</span>
+              <h3>Produtos por categoria</h3>
+            </div>
+
+            <span>🗂️</span>
+          </div>
+
+          <div id="relatorio-categorias-lista">
+
+            <!--
+              O JavaScript preencherá esta área
+              com os dados vindos da API.
+
+              Exemplo futuro:
+
+              <div class="categoria-relatorio">
+                <div>
+                  <span>Produtos Agrícolas</span>
+                  <strong>8</strong>
+                </div>
+
+                <div class="categoria-barra">
+                  <span style="width: 70%;"></span>
+                </div>
+              </div>
+            -->
+
+            <div class="relatorio-vazio">
+              <span>📊</span>
+              <p>Aguardando dados do banco...</p>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Últimos registros -->
+        <div class="relatorio-bloco">
+
+          <div class="relatorio-bloco-header">
+            <div>
+              <span class="card-kicker">Atividade</span>
+              <h3>Resumo da produção</h3>
+            </div>
+
+            <span>🌱</span>
+          </div>
+
+          <div class="producao-resumo">
+
+            <div>
+              <span>Última colheita</span>
+              <strong id="relatorio-ultima-colheita">—</strong>
+            </div>
+
+            <div>
+              <span>Total de registros</span>
+              <strong id="relatorio-registros">—</strong>
+            </div>
+
+            <div>
+              <span>Unidade mais utilizada</span>
+              <strong id="relatorio-unidade">—</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
   </main>
 
   <footer>

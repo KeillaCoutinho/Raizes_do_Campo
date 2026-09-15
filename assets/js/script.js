@@ -10,16 +10,164 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 2. Formulário de Contato
-  const formContato = document.getElementById("contatoForm");
+  // 2. Validação do formulário de contato
+const formContato = document.getElementById("contatoForm");
 
-  if (formContato) {
-    formContato.addEventListener("submit", (e) => {
-      e.preventDefault();
-      alert("Mensagem enviada com sucesso!");
-      formContato.reset();
-    });
+if (formContato) {
+  const campoNome = document.getElementById("name");
+  const campoEmail = document.getElementById("email");
+  const campoMensagem = document.getElementById("message");
+
+  // Cria uma mensagem de erro abaixo do campo
+  function mostrarErro(campo, mensagem) {
+    campo.classList.add("campo-invalido");
+
+    let mensagemErro = campo.parentElement.querySelector(
+      `.mensagem-erro[data-campo="${campo.id}"]`
+    );
+
+    if (!mensagemErro) {
+      mensagemErro = document.createElement("small");
+      mensagemErro.classList.add("mensagem-erro");
+      mensagemErro.dataset.campo = campo.id;
+      campo.insertAdjacentElement("afterend", mensagemErro);
+    }
+
+    mensagemErro.textContent = mensagem;
   }
+
+  // Remove a mensagem de erro do campo
+  function removerErro(campo) {
+    campo.classList.remove("campo-invalido");
+
+    const mensagemErro = campo.parentElement.querySelector(
+      `.mensagem-erro[data-campo="${campo.id}"]`
+    );
+
+    if (mensagemErro) {
+      mensagemErro.remove();
+    }
+  }
+
+  // Valida o formulário no envio
+  formContato.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    let formularioValido = true;
+
+    const nome = campoNome.value.trim();
+    const email = campoEmail.value.trim();
+    const mensagem = campoMensagem.value.trim();
+
+    // Limpa os erros anteriores
+    removerErro(campoNome);
+    removerErro(campoEmail);
+    removerErro(campoMensagem);
+
+    // Validação do nome
+    if (nome === "") {
+      mostrarErro(campoNome, "Por favor, informe seu nome.");
+      formularioValido = false;
+    } else if (nome.length < 3) {
+      mostrarErro(
+        campoNome,
+        "O nome deve ter pelo menos 3 caracteres."
+      );
+      formularioValido = false;
+    }
+
+    // Validação do e-mail
+    const formatoEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (email === "") {
+      mostrarErro(campoEmail, "Por favor, informe seu e-mail.");
+      formularioValido = false;
+    } else if (!formatoEmail.test(email)) {
+      mostrarErro(
+        campoEmail,
+        "Digite um e-mail válido. Exemplo: nome@email.com"
+      );
+      formularioValido = false;
+    }
+
+    // Validação da mensagem
+    if (mensagem === "") {
+      mostrarErro(
+        campoMensagem,
+        "Por favor, escreva uma mensagem."
+      );
+      formularioValido = false;
+    } else if (mensagem.length < 10) {
+      mostrarErro(
+        campoMensagem,
+        "A mensagem deve ter pelo menos 10 caracteres."
+      );
+      formularioValido = false;
+    }
+
+    // Se houver algum erro, não continua
+    if (!formularioValido) {
+      return;
+    }
+
+    // Envio assíncrono para o backend
+    try {
+    const resposta = await fetch("http://localhost:3000/contato", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            nome: nome,
+            email: email,
+            mensagem: mensagem
+        })
+    });
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+        alert(resultado.erros.join("\n"));
+        return;
+    }
+
+    alert(resultado.mensagem);
+    formContato.reset();
+
+} catch (erro) {
+    console.error("Erro ao enviar formulário:", erro);
+
+    alert(
+        "Não foi possível enviar a mensagem. Verifique se o servidor está funcionando."
+    );
+}
+
+    // Caso todos os campos estejam corretos
+    alert("Mensagem enviada com sucesso!");
+    formContato.reset();
+  });
+
+  // Remove o erro enquanto o usuário corrige o campo
+  campoNome.addEventListener("input", () => {
+    if (campoNome.value.trim().length >= 3) {
+      removerErro(campoNome);
+    }
+  });
+
+  campoEmail.addEventListener("input", () => {
+    const formatoEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (formatoEmail.test(campoEmail.value.trim())) {
+      removerErro(campoEmail);
+    }
+  });
+
+  campoMensagem.addEventListener("input", () => {
+    if (campoMensagem.value.trim().length >= 10) {
+      removerErro(campoMensagem);
+    }
+  });
+}
 
   // 3. Alternância entre Login e Cadastro
   const tabLogin = document.getElementById("tab-login");
