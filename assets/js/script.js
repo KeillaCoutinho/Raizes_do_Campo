@@ -134,18 +134,15 @@ if (formContato) {
     alert(resultado.mensagem);
     formContato.reset();
 
-} catch (erro) {
-    console.error("Erro ao enviar formulário:", erro);
+  } catch (erro) {
+      console.error("Erro ao enviar formulário:", erro);
 
-    alert(
+      alert(
         "Não foi possível enviar a mensagem. Verifique se o servidor está funcionando."
-    );
-}
+      );
+    }
 
-    // Caso todos os campos estejam corretos
-    alert("Mensagem enviada com sucesso!");
-    formContato.reset();
-  });
+});
 
   // Remove o erro enquanto o usuário corrige o campo
   campoNome.addEventListener("input", () => {
