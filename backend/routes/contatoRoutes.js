@@ -1,8 +1,68 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 
 const router = express.Router();
 
-router.post('/contato', (req, res) => {
+function criarTransportador() {
+    const host = process.env.SMTP_HOST;
+    const port = Number(process.env.SMTP_PORT || 587);
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+    const secure = process.env.SMTP_SECURE === 'true' || port === 465;
+
+    if (!host || !user || !pass) {
+        throw new Error(
+            'Configuração SMTP ausente. Defina SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS e EMAIL_FROM no arquivo .env.'
+        );
+    }
+
+    return nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        auth: {
+            user,
+            pass
+        }
+    });
+}
+
+async function enviarEmailAgradecimento(destinatario, nome = 'cliente') {
+    const email = String(destinatario || '').trim();
+
+    if (!email) {
+        throw new Error('E-mail do destinatário é obrigatório.');
+    }
+
+    const nomeFormatado = String(nome || 'cliente').trim() || 'cliente';
+    const transportador = criarTransportador();
+
+    const resultado = await transportador.sendMail({
+        from: process.env.EMAIL_FROM || process.env.SMTP_USER,
+        to: email,
+        subject: 'Agradecemos o seu contato!',
+        html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937;">
+                <h2 style="color: #2f6f3e;">Olá, ${nomeFormatado}!</h2>
+                <p>Obrigado por entrar em contato com a Raízes do Campo.</p>
+                <p>Recebemos sua mensagem e, em breve, nossa equipe vai responder.</p>
+                <p>Enquanto isso, agradecemos pelo interesse e pela confiança em nosso trabalho.</p>
+                <br>
+                <p>Atenciosamente,<br>Equipe Raízes do Campo</p>
+            </div>
+        `
+    });
+
+    return {
+        ok: true,
+        destinatario: email,
+        assunto: 'Agradecemos o seu contato!',
+        mensagemId: resultado.messageId,
+        modo: 'smtp'
+    };
+}
+
+router.post('/contato', async (req, res) => {
     const { nome, email, mensagem } = req.body;
 
     const erros = [];
@@ -50,11 +110,22 @@ router.post('/contato', (req, res) => {
         });
     }
 
-    // Se os dados forem válidos
-    return res.status(200).json({
-        sucesso: true,
-        mensagem: 'Dados do formulário validados com sucesso!'
-    });
+    try {
+        await enviarEmailAgradecimento(email, nome);
+
+        return res.status(200).json({
+            sucesso: true,
+            mensagem: 'Mensagem enviada com sucesso! Em breve entraremos em contato.'
+        });
+    } catch (erro) {
+        console.error('Erro ao enviar e-mail de agradecimento:', erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            erros: ['Não foi possível enviar a confirmação do contato. Tente novamente mais tarde.']
+        });
+    }
 });
 
 module.exports = router;
+module.exports.enviarEmailAgradecimento = enviarEmailAgradecimento;
