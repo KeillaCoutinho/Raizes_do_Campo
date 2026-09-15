@@ -2,6 +2,7 @@ require('dotenv').config({
     path: require('path').resolve(__dirname, '../.env')
 });
 
+const path = require('path');
 const express = require('express');
 const pool = require('./config/database');
 const cors = require('cors');
@@ -16,20 +17,28 @@ const session = require('express-session');
 
 const app = express();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const frontendUrl = process.env.FRONTEND_URL;
+
 app.use(express.json({ limit: '10mb' }));
 
 app.use(cors({
-    origin: 'http://127.0.0.1:5500',
+    origin: frontendUrl || true,
     credentials: true
 }));
+
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
 
 app.use(session({
     secret: 'raizes-do-campo-secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1000 * 60 * 60 // a sessão irá durar 1 hora
+        maxAge: 1000 * 60 * 60,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     }
 }));
 
@@ -39,8 +48,10 @@ app.use(contatoRoutes);
 app.use(consumidorRoutes);
 app.use(produtorRoutes);
 
+app.use(express.static(path.resolve(__dirname, '..')));
+
 app.get('/', (req, res) => {
-    res.send('Backend do Raízes do Campo funcionando! 🌱');
+    res.sendFile(path.resolve(__dirname, '..', 'index.html'));
 });
 
 app.get('/teste-banco', async (req, res) => {
@@ -62,5 +73,5 @@ app.get('/teste-banco', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
