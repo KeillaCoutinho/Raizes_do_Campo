@@ -7,51 +7,68 @@ async function buscarProdutos() {
     return resultado.rows;
 }
 
+// Função para buscar somente os produtos de um produtor
+const buscarProdutosPorProdutor = async (id_produtor) => {
+    const resultado = await pool.query(
+        `SELECT *
+         FROM produto
+         WHERE id_produtor = $1
+         ORDER BY id_produto`,
+        [id_produtor]
+    );
+
+    return resultado.rows;
+};
+
 //função para criar produtos
-async function criarProduto(id_categoria, nome, descricao, preco, unidade_medida) {
+async function criarProduto(id_categoria, id_produtor, nome, descricao, preco, unidade_medida) {
     const resultado = await pool.query(
         `INSERT INTO produto 
-        (id_categoria, nome, descricao, preco, unidade_medida)
-        VALUES ($1, $2, $3, $4, $5)
+        (id_categoria, id_produtor, nome, descricao, preco, unidade_medida)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;`,
-        [id_categoria, nome, descricao, preco, unidade_medida]
+        [id_categoria, id_produtor, nome, descricao, preco, unidade_medida]
     );
 
     return resultado.rows[0];
 }
 
-//função para atualizar produtos
-async function atualizarProduto(id_produto, id_categoria, nome, descricao, preco, unidade_medida) {
+// Função para atualizar produto
+const atualizarProduto = async (
+    id, id_categoria, nome, descricao, preco, unidade_medida, id_produtor) => {
     const resultado = await pool.query(
         `UPDATE produto
-        SET id_categoria = $1,
-            nome = $2,
-            descricao = $3,
-            preco = $4,
-            unidade_medida = $5
-        WHERE id_produto = $6
-        RETURNING *;`,
-        [id_categoria, nome, descricao, preco, unidade_medida, id_produto]
+         SET id_categoria = $1,
+             nome = $2,
+             descricao = $3,
+             preco = $4,
+             unidade_medida = $5
+         WHERE id_produto = $6
+           AND id_produtor = $7
+         RETURNING *;`,
+        [id_categoria, nome, descricao, preco, unidade_medida, id, id_produtor]
     );
 
     return resultado.rows[0];
-}
+};
 
-//função para deletar produtos
-async function deletarProduto(id_produto) {
+// Função para deletar produto
+const deletarProduto = async (id, id_produtor) => {
     const resultado = await pool.query(
         `DELETE FROM produto
-        WHERE id_produto = $1
-        RETURNING *;`,
-        [id_produto]
+         WHERE id_produto = $1
+           AND id_produtor = $2
+         RETURNING *;`,
+        [id, id_produtor]
     );
 
     return resultado.rows[0];
-}
+};
 
 module.exports = {
-    buscarProdutos,
     criarProduto,
+    buscarProdutos,
+    buscarProdutosPorProdutor,
     atualizarProduto,
     deletarProduto
 };
