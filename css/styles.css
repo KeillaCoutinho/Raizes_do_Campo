@@ -930,6 +930,23 @@ footer::before {
     color: #edf6e8;
 }
 
+.tipo-usuario .opcao-tipo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.tipo-usuario .opcao-tipo input[type="radio"] {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    accent-color: var(--accent);
+    transform: none;
+}
+
 select {
     width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.16);
@@ -1262,6 +1279,28 @@ select:focus {
 .producao-resumo strong {
     color: #102109;
     font-size: 0.9rem;
+}
+
+.form-resumo-producao {
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(16, 33, 9, 0.18);
+}
+
+.form-resumo-producao .input-group {
+    margin-bottom: 0;
+    gap: 6px;
+}
+
+.form-resumo-producao .input-group label {
+    color: #315b39;
+    font-size: 0.82rem;
+}
+
+.form-resumo-producao button {
+    justify-self: start;
+    padding: 12px 18px;
 }
 
 

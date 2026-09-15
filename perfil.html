@@ -633,6 +633,52 @@
 
                         </div>
 
+                        <form id="form-resumo-producao" class="form-resumo-producao">
+
+                            <div class="input-group">
+                                <label for="ultima-colheita">
+                                    Última colheita
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="ultima-colheita"
+                                >
+                            </div>
+
+                            <div class="input-group">
+                                <label for="total-registros">
+                                    Total de registros
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="total-registros"
+                                    min="0"
+                                    step="1"
+                                    required
+                                >
+                            </div>
+
+                            <div class="input-group">
+                                <label for="unidade-mais-utilizada">
+                                    Unidade mais utilizada
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="unidade-mais-utilizada"
+                                    maxlength="100"
+                                    placeholder="Ex: kg, caixas ou litros"
+                                >
+                            </div>
+
+                            <button type="submit" class="btn-primary">
+                                Salvar resumo
+                            </button>
+
+                        </form>
+
                     </div>
 
                 </div>

@@ -189,6 +189,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 produtos
             );
 
+            atualizarRelatorio(produtos);
+            carregarResumoProducao();
+
             const listaItens =
                 document.getElementById("lista-itens");
 
@@ -297,6 +300,203 @@ document.addEventListener("DOMContentLoaded", () => {
             .textContent = "Atualizar Item";
 
         formulario.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function atualizarRelatorio(produtos) {
+        const totalProdutos = produtos.length;
+        const categorias = new Map();
+        const unidades = new Map();
+        const nomesCategorias = {
+            2: "Frutas",
+            3: "Verduras",
+            4: "Legumes",
+            5: "Raízes",
+            6: "Grãos",
+            7: "Temperos",
+            8: "Hortaliças",
+            9: "Derivados",
+            10: "Orgânicos",
+            11: "Artesanais"
+        };
+
+        produtos.forEach((produto) => {
+            const categoria = String(produto.id_categoria);
+            const unidade = produto.unidade_medida || "Não informada";
+
+            categorias.set(categoria, (categorias.get(categoria) || 0) + 1);
+            unidades.set(unidade, (unidades.get(unidade) || 0) + 1);
+        });
+
+        const precoMedio = totalProdutos > 0
+            ? produtos.reduce((total, produto) =>
+                total + Number(produto.preco || 0), 0
+            ) / totalProdutos
+            : 0;
+
+        const elementoProdutos = document.getElementById("relatorio-produtos");
+        const elementoCategorias = document.getElementById("relatorio-categorias");
+        const elementoPrecoMedio = document.getElementById("relatorio-preco-medio");
+        const listaCategorias = document.getElementById("relatorio-categorias-lista");
+        const elementoStatus = document.getElementById("relatorio-status");
+
+        if (elementoProdutos) {
+            elementoProdutos.textContent = totalProdutos;
+        }
+
+        if (elementoCategorias) {
+            elementoCategorias.textContent = categorias.size;
+        }
+
+        if (elementoPrecoMedio) {
+            elementoPrecoMedio.textContent = totalProdutos > 0
+                ? `R$ ${precoMedio.toFixed(2).replace(".", ",")}`
+                : "R$ 0,00";
+        }
+
+        if (elementoStatus) {
+            elementoStatus.textContent = "Dados atualizados";
+        }
+
+        if (listaCategorias) {
+            if (categorias.size === 0) {
+                listaCategorias.innerHTML = `
+                    <div class="relatorio-vazio">
+                        <span>📊</span>
+                        <p>Nenhum produto cadastrado.</p>
+                    </div>
+                `;
+            } else {
+                listaCategorias.innerHTML = Array.from(categorias.entries())
+                    .map(([categoria, quantidade]) => {
+                        const percentual = (quantidade / totalProdutos) * 100;
+                        const nome = nomesCategorias[categoria] || `Categoria ${categoria}`;
+
+                        return `
+                            <div class="categoria-relatorio">
+                                <div>
+                                    <span>${nome}</span>
+                                    <strong>${quantidade}</strong>
+                                </div>
+                                <div class="categoria-barra">
+                                    <span style="width: ${percentual}%"></span>
+                                </div>
+                            </div>
+                        `;
+                    })
+                    .join("");
+            }
+        }
+
+        const unidadeMaisUtilizada = Array.from(unidades.entries())
+            .sort((a, b) => b[1] - a[1])[0]?.[0];
+
+        const elementoUnidade = document.getElementById("relatorio-unidade");
+
+        if (elementoUnidade && unidadeMaisUtilizada) {
+            elementoUnidade.textContent = unidadeMaisUtilizada;
+        }
+    }
+
+    function exibirResumoProducao(resumo) {
+        const ultimaColheita = document.getElementById("relatorio-ultima-colheita");
+        const registros = document.getElementById("relatorio-registros");
+        const producao = document.getElementById("relatorio-producao");
+        const unidade = document.getElementById("relatorio-unidade");
+        const campoData = document.getElementById("ultima-colheita");
+        const campoRegistros = document.getElementById("total-registros");
+        const campoUnidade = document.getElementById("unidade-mais-utilizada");
+
+        if (ultimaColheita) {
+            ultimaColheita.textContent = resumo.ultima_colheita
+                ? resumo.ultima_colheita.split("T")[0].split("-").reverse().join("/")
+                : "Não informada";
+        }
+
+        if (registros) {
+            registros.textContent = resumo.total_registros ?? 0;
+        }
+
+        if (producao) {
+            producao.textContent = resumo.total_registros ?? 0;
+        }
+
+        if (unidade) {
+            unidade.textContent = resumo.unidade_mais_utilizada || "Não informada";
+        }
+
+        if (campoData) {
+            campoData.value = resumo.ultima_colheita
+                ? resumo.ultima_colheita.split("T")[0]
+                : "";
+        }
+
+        if (campoRegistros) {
+            campoRegistros.value = resumo.total_registros ?? 0;
+        }
+
+        if (campoUnidade) {
+            campoUnidade.value = resumo.unidade_mais_utilizada || "";
+        }
+    }
+
+    async function carregarResumoProducao() {
+        if (!document.getElementById("form-resumo-producao")) {
+            return;
+        }
+
+        try {
+            const resposta = await fetch(`${apiUrl}/resumo-producao`, {
+                method: "GET",
+                credentials: "include"
+            });
+
+            if (!resposta.ok) {
+                return;
+            }
+
+            exibirResumoProducao(await resposta.json());
+        } catch (erro) {
+            console.error("Erro ao carregar resumo da produção:", erro);
+        }
+    }
+
+    const formResumoProducao = document.getElementById("form-resumo-producao");
+
+    if (formResumoProducao) {
+        formResumoProducao.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            try {
+                const resposta = await fetch(`${apiUrl}/resumo-producao`, {
+                    method: "PUT",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        ultima_colheita: document.getElementById("ultima-colheita").value,
+                        total_registros: document.getElementById("total-registros").value,
+                        unidade_mais_utilizada: document
+                            .getElementById("unidade-mais-utilizada")
+                            .value
+                            .trim()
+                    })
+                });
+
+                const resultado = await resposta.json();
+
+                if (!resposta.ok) {
+                    alert(resultado.erro || "Erro ao salvar resumo da produção.");
+                    return;
+                }
+
+                exibirResumoProducao(resultado);
+                alert("Resumo da produção atualizado com sucesso!");
+            } catch (erro) {
+                console.error("Erro ao salvar resumo da produção:", erro);
+                alert("Não foi possível conectar com o servidor.");
+            }
+        });
     }
 
 // Carrega os produtos somente se
