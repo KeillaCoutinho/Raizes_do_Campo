@@ -1,292 +1,754 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel do Usuário - Raízes do Campo</title>
-  <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Painel do Usuário - Raízes do Campo</title>
+
+    <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
-  <header>
-    <nav class="navbar">
-      <div class="logo">🌱 Agricultura Familiar - Raízes do Campo</div>
-      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">☰</button>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Início</a></li>
-        <li><a href="sobre.html">Sobre</a></li>
-        <li><a href="beneficios.html">Benefícios</a></li>
-        <li><a href="produtos.html">Produtos</a></li>
-        <li><a href="contato.html">Contato</a></li>
-        <li><a href="perfil.html" class="active">Meu perfil</a></li>
-      </ul>
-    </nav>
-  </header>
+    <!-- =========================================
+         HEADER / MENU
+    ========================================== -->
 
-  <main class="dashboard-container">
-    <h1>Painel de Gerenciamento</h1>
+    <header>
 
-    <!-- Seção de Dados do Perfil -->
-    <section class="card-dashboard">
-      <h2>Meus Dados</h2>
-      <p><strong>Nome:</strong> <span id="user-name">Carregando...</span></p>
-      <p><strong>E-mail:</strong> <span id="user-email">Carregando...</span></p>
-    </section>
+        <nav class="navbar">
 
-    <!-- Formulário para Cadastrar/Editar Item (CRUD) -->
-    <section class="card-dashboard">
-      <h2 id="form-title">Cadastrar Novo Produto / Serviço</h2>
-      <form id="form-crud" enctype="multipart/form-data">
-        <input type="hidden" id="item-id">
-        
-        <div class="input-group">
-          <label for="titulo">Título</label>
-          <input type="text" id="titulo" required placeholder="Ex: Análise de Solo">
-        </div>
-
-        <div class="input-group">
-          <label for="categoria">Categoria</label>
-          <select id="categoria" required>
-            <option value="">Selecione uma categoria</option>
-            <option value="1">Consultoria</option>
-            <option value="2">Produtos Agrícolas</option>
-          </select>
-        </div>
-
-        <div class="input-group">
-          <label for="preco">Preço (R$)</label>
-          <input type="number" step="0.01" id="preco" placeholder="0.00">
-        </div>
-
-        <div class="input-group">
-          <label for="imagem">Imagem do Produto/Serviço</label>
-          <input type="file" id="imagem" accept="image/*">
-        </div>
-
-        <div class="input-group">
-          <label for="descricao">Descrição</label>
-          <textarea id="descricao" rows="4" placeholder="Detalhes sobre o serviço ou produto..."></textarea>
-        </div>
-
-        <button type="submit" class="btn-primary">Salvar Item</button>
-      </form>
-    </section>
-
-    <!-- Tabela para Listagem, Edição e Exclusão -->
-    <section class="card-dashboard">
-      <h2>Meus Anúncios Cadastrados</h2>
-      <table class="tabela-crud">
-        <thead>
-          <tr>
-            <th>Imagem</th>
-            <th>Título</th>
-            <th>Categoria</th>
-            <th>Preço</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="lista-itens">
-          <!-- Linhas renderizadas via JS -->
-          <tr>
-            <td><img src="assets/img/agricultura_capa.jpeg" alt="Item" width="50"></td>
-            <td>Análise de Solo</td>
-            <td>Consultoria</td>
-            <td>R$ 150,00</td>
-            <td>
-              <button class="btn-edit">Editar</button>
-              <button class="btn-delete">Excluir</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-        <!-- ==============================
-         RELATÓRIO / INDICADORES
-    =============================== -->
-    <section class="card-dashboard relatorio-dashboard">
-
-      <div class="relatorio-header">
-        <div>
-          <span class="relatorio-tag">📊 Visão geral</span>
-          <h2>Meu Relatório</h2>
-          <p>
-            Acompanhe os principais dados dos seus produtos,
-            categorias e registros de produção.
-          </p>
-        </div>
-
-        <div class="relatorio-status">
-          <span>Dados do sistema</span>
-          <strong id="relatorio-status">
-            Aguardando dados...
-          </strong>
-        </div>
-      </div>
-
-
-      <!-- Indicadores -->
-      <div class="relatorio-indicadores">
-
-        <div class="relatorio-indicador">
-          <div class="relatorio-icone">🌾</div>
-
-          <div>
-            <span>Produtos cadastrados</span>
-            <strong id="relatorio-produtos">—</strong>
-          </div>
-        </div>
-
-
-        <div class="relatorio-indicador">
-          <div class="relatorio-icone">🗂️</div>
-
-          <div>
-            <span>Categorias utilizadas</span>
-            <strong id="relatorio-categorias">—</strong>
-          </div>
-        </div>
-
-
-        <div class="relatorio-indicador">
-          <div class="relatorio-icone">📦</div>
-
-          <div>
-            <span>Produção registrada</span>
-            <strong id="relatorio-producao">—</strong>
-          </div>
-        </div>
-
-
-        <div class="relatorio-indicador">
-          <div class="relatorio-icone">💰</div>
-
-          <div>
-            <span>Valor médio dos produtos</span>
-            <strong id="relatorio-preco-medio">—</strong>
-          </div>
-        </div>
-
-      </div>
-
-
-      <!-- Dados por categoria -->
-      <div class="relatorio-detalhes">
-
-        <div class="relatorio-bloco">
-
-          <div class="relatorio-bloco-header">
-            <div>
-              <span class="card-kicker">Categorias</span>
-              <h3>Produtos por categoria</h3>
+            <div class="logo">
+                🌱 Agricultura Familiar - Raízes do Campo
             </div>
 
-            <span>🗂️</span>
-          </div>
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                type="button"
+                aria-label="Abrir menu"
+                aria-expanded="false"
+                aria-controls="navLinks"
+            >
+                ☰
+            </button>
 
-          <div id="relatorio-categorias-lista">
+            <ul class="nav-links" id="navLinks">
 
-            <!--
-              O JavaScript preencherá esta área
-              com os dados vindos da API.
+                <li>
+                    <a href="index.html">
+                        Início
+                    </a>
+                </li>
 
-              Exemplo futuro:
+                <li>
+                    <a href="sobre.html">
+                        Sobre
+                    </a>
+                </li>
 
-              <div class="categoria-relatorio">
-                <div>
-                  <span>Produtos Agrícolas</span>
-                  <strong>8</strong>
+                <li>
+                    <a href="beneficios.html">
+                        Benefícios
+                    </a>
+                </li>
+
+                <li>
+                    <a href="produtos.html">
+                        Produtos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="contato.html">
+                        Contato
+                    </a>
+                </li>
+
+                <li>
+                    <a href="perfil.html" class="active">
+                        Meu perfil
+                    </a>
+                </li>
+
+            </ul>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================================
+         CONTEÚDO PRINCIPAL
+    ========================================== -->
+
+    <main class="dashboard-container">
+
+        <h1 id="titulo-painel">
+            Painel de Gerenciamento
+        </h1>
+
+
+        <!-- =========================================
+             DADOS DO USUÁRIO
+        ========================================== -->
+
+        <section class="card-dashboard">
+
+            <h2>
+                Meus Dados
+            </h2>
+
+            <p>
+                <strong>Nome:</strong>
+                <span id="user-name">
+                    Carregando...
+                </span>
+            </p>
+
+            <p>
+                <strong>E-mail:</strong>
+                <span id="user-email">
+                    Carregando...
+                </span>
+            </p>
+
+        </section>
+
+
+        <!-- =========================================
+             ÁREA EXCLUSIVA DO PRODUTOR
+        ========================================== -->
+
+        <div id="area-produtor">
+
+
+            <!-- =====================================
+                 CADASTRAR / EDITAR PRODUTO
+            ====================================== -->
+
+            <section class="card-dashboard">
+
+                <h2 id="form-title">
+                    Cadastrar Novo Produto / Serviço
+                </h2>
+
+
+                <form
+                    id="form-crud"
+                    enctype="multipart/form-data"
+                >
+
+                    <input
+                        type="hidden"
+                        id="item-id"
+                    >
+
+
+                    <!-- Título -->
+
+                    <div class="input-group">
+
+                        <label for="titulo">
+                            Título
+                        </label>
+
+                        <input
+                            type="text"
+                            id="titulo"
+                            required
+                            placeholder="Ex: Análise de Solo"
+                        >
+
+                    </div>
+
+
+                    <!-- Categoria -->
+
+                    <div class="input-group">
+
+                        <label for="categoria">
+                            Categoria
+                        </label>
+
+                        <select
+                            id="categoria"
+                            required
+                        >
+
+                            <option value="">
+                                Selecione uma categoria
+                            </option>
+
+                            <option value="2">
+                                Frutas
+                            </option>
+
+                            <option value="3">
+                                Verduras
+                            </option>
+
+                            <option value="4">
+                                Legumes
+                            </option>
+
+                            <option value="5">
+                                Raízes
+                            </option>
+
+                            <option value="6">
+                                Grãos
+                            </option>
+
+                            <option value="7">
+                                Temperos
+                            </option>
+
+                            <option value="8">
+                                Hortaliças
+                            </option>
+
+                            <option value="9">
+                                Derivados
+                            </option>
+
+                            <option value="10">
+                                Orgânicos
+                            </option>
+
+                            <option value="11">
+                                Artesanais
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Preço -->
+
+                    <div class="input-group">
+
+                        <label for="preco">
+                            Preço (R$)
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            id="preco"
+                            placeholder="0.00"
+                        >
+
+                    </div>
+
+
+                    <!-- Imagem -->
+
+                    <div class="input-group">
+
+                        <label for="imagem">
+                            Imagem do Produto/Serviço
+                        </label>
+
+                        <input
+                            type="file"
+                            id="imagem"
+                            accept="image/*"
+                        >
+
+                    </div>
+
+
+                    <!-- Descrição -->
+
+                    <div class="input-group">
+
+                        <label for="descricao">
+                            Descrição
+                        </label>
+
+                        <textarea
+                            id="descricao"
+                            rows="4"
+                            placeholder="Detalhes sobre o serviço ou produto..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- Botão -->
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Salvar Item
+                    </button>
+
+                </form>
+
+            </section>
+
+
+
+            <!-- =====================================
+                 MEUS ANÚNCIOS
+            ====================================== -->
+
+            <section class="card-dashboard">
+
+                <h2>
+                    Meus Anúncios Cadastrados
+                </h2>
+
+
+                <table class="tabela-crud">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Imagem
+                            </th>
+
+                            <th>
+                                Título
+                            </th>
+
+                            <th>
+                                Categoria
+                            </th>
+
+                            <th>
+                                Preço
+                            </th>
+
+                            <th>
+                                Ações
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="lista-itens">
+
+                        <!--
+                            O JavaScript preencherá
+                            esta área com os anúncios.
+                        -->
+
+                    </tbody>
+
+                </table>
+
+            </section>
+
+
+
+            <!-- =====================================
+                 RELATÓRIO / INDICADORES
+            ====================================== -->
+
+            <section class="card-dashboard relatorio-dashboard">
+
+
+                <!-- Cabeçalho do relatório -->
+
+                <div class="relatorio-header">
+
+                    <div>
+
+                        <span class="relatorio-tag">
+                            📊 Visão geral
+                        </span>
+
+                        <h2>
+                            Meu Relatório
+                        </h2>
+
+                        <p>
+                            Acompanhe os principais dados dos seus produtos,
+                            categorias e registros de produção.
+                        </p>
+
+                    </div>
+
+
+                    <div class="relatorio-status">
+
+                        <span>
+                            Dados do sistema
+                        </span>
+
+                        <strong id="relatorio-status">
+                            Aguardando dados...
+                        </strong>
+
+                    </div>
+
                 </div>
 
-                <div class="categoria-barra">
-                  <span style="width: 70%;"></span>
+
+
+                <!-- =================================
+                     INDICADORES
+                ================================== -->
+
+                <div class="relatorio-indicadores">
+
+
+                    <!-- Produtos -->
+
+                    <div class="relatorio-indicador">
+
+                        <div class="relatorio-icone">
+                            🌾
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Produtos cadastrados
+                            </span>
+
+                            <strong id="relatorio-produtos">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Categorias -->
+
+                    <div class="relatorio-indicador">
+
+                        <div class="relatorio-icone">
+                            🗂️
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Categorias utilizadas
+                            </span>
+
+                            <strong id="relatorio-categorias">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Produção -->
+
+                    <div class="relatorio-indicador">
+
+                        <div class="relatorio-icone">
+                            📦
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Produção registrada
+                            </span>
+
+                            <strong id="relatorio-producao">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Preço médio -->
+
+                    <div class="relatorio-indicador">
+
+                        <div class="relatorio-icone">
+                            💰
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Valor médio dos produtos
+                            </span>
+
+                            <strong id="relatorio-preco-medio">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
                 </div>
-              </div>
-            -->
 
-            <div class="relatorio-vazio">
-              <span>📊</span>
-              <p>Aguardando dados do banco...</p>
+
+
+                <!-- =================================
+                     DETALHES DO RELATÓRIO
+                ================================== -->
+
+                <div class="relatorio-detalhes">
+
+
+                    <!-- Produtos por categoria -->
+
+                    <div class="relatorio-bloco">
+
+                        <div class="relatorio-bloco-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    Categorias
+                                </span>
+
+                                <h3>
+                                    Produtos por categoria
+                                </h3>
+
+                            </div>
+
+                            <span>
+                                🗂️
+                            </span>
+
+                        </div>
+
+
+                        <div id="relatorio-categorias-lista">
+
+                            <div class="relatorio-vazio">
+
+                                <span>
+                                    📊
+                                </span>
+
+                                <p>
+                                    Aguardando dados do banco...
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Resumo da produção -->
+
+                    <div class="relatorio-bloco">
+
+                        <div class="relatorio-bloco-header">
+
+                            <div>
+
+                                <span class="card-kicker">
+                                    Atividade
+                                </span>
+
+                                <h3>
+                                    Resumo da produção
+                                </h3>
+
+                            </div>
+
+                            <span>
+                                🌱
+                            </span>
+
+                        </div>
+
+
+                        <div class="producao-resumo">
+
+
+                            <div>
+
+                                <span>
+                                    Última colheita
+                                </span>
+
+                                <strong id="relatorio-ultima-colheita">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Total de registros
+                                </span>
+
+                                <strong id="relatorio-registros">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Unidade mais utilizada
+                                </span>
+
+                                <strong id="relatorio-unidade">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer>
+
+        <div class="footer-container">
+
+
+            <!-- Sobre -->
+
+            <div>
+
+                <h3>
+                    🌱 Agricultura Familiar
+                </h3>
+
+                <p>
+                    Fortalecendo o campo e alimentando o Brasil.
+                </p>
+
             </div>
 
-          </div>
+
+            <!-- Links -->
+
+            <div>
+
+                <h4>
+                    Links rápidos
+                </h4>
+
+                <ul>
+
+                    <li>
+                        <a href="index.html">
+                            Início
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="sobre.html">
+                            Sobre
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="beneficios.html">
+                            Benefícios
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="produtos.html">
+                            Produtos
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="contato.html">
+                            Contato
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="login.html">
+                            Entrar
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="perfil.html">
+                            Meu perfil
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Contato -->
+
+            <div>
+
+                <h4>
+                    Contato
+                </h4>
+
+                <p>
+                    📧 contato@agricultura.com
+                </p>
+
+                <p>
+                    📞 (75) 99999-9999
+                </p>
+
+            </div>
 
         </div>
 
 
-        <!-- Últimos registros -->
-        <div class="relatorio-bloco">
+        <div class="copyright">
 
-          <div class="relatorio-bloco-header">
-            <div>
-              <span class="card-kicker">Atividade</span>
-              <h3>Resumo da produção</h3>
-            </div>
+            © 2026 Agricultura Familiar
+            <br>
 
-            <span>🌱</span>
-          </div>
-
-          <div class="producao-resumo">
-
-            <div>
-              <span>Última colheita</span>
-              <strong id="relatorio-ultima-colheita">—</strong>
-            </div>
-
-            <div>
-              <span>Total de registros</span>
-              <strong id="relatorio-registros">—</strong>
-            </div>
-
-            <div>
-              <span>Unidade mais utilizada</span>
-              <strong id="relatorio-unidade">—</strong>
-            </div>
-
-          </div>
+            Projeto integrador - Liga Steam / ArcelorMittal
 
         </div>
 
-      </div>
-
-    </section>
+    </footer>
 
 
-  </main>
+    <!-- JavaScript -->
 
-  <footer>
-    <div class="footer-container">
-      <div>
-        <h3>🌱 Agricultura Familiar</h3>
-        <p>Fortalecendo o campo e alimentando o Brasil.</p>
-      </div>
+    <script src="assets/js/script.js"></script>
 
-      <div>
-        <h4>Links rápidos</h4>
-        <ul>
-          <li><a href="index.html">Início</a></li>
-          <li><a href="sobre.html">Sobre</a></li>
-          <li><a href="beneficios.html">Benefícios</a></li>
-          <li><a href="produtos.html">Produtos</a></li>
-          <li><a href="contato.html">Contato</a></li>
-          <li><a href="login.html">Entrar</a></li>
-          <li><a href="perfil.html">Meu perfil</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h4>Contato</h4>
-        <p>📧 contato@agricultura.com</p>
-        <p>📞 (75) 99999-9999</p>
-      </div>
-    </div>
-
-    <div class="copyright">
-      © 2026 Agricultura Familiar <br>
-      Projeto integrador - Liga Steam / ArcelorMittal
-    </div>
-  </footer>
-
-  <script src="assets/js/script.js"></script>
 </body>
+
 </html>

@@ -1,17 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login e Cadastro - Raízes do Campo</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
   <header>
     <nav class="navbar">
-      <div class="logo">🌱 Agricultura Familiar - Raízes do Campo</div>
-      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+
+      <div class="logo">
+        🌱 Agricultura Familiar - Raízes do Campo
+      </div>
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Abrir menu"
+        aria-expanded="false"
+        aria-controls="navLinks"
+      >
+        ☰
+      </button>
+
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Início</a></li>
         <li><a href="sobre.html">Sobre</a></li>
@@ -21,150 +37,357 @@
         <li><a href="login.html" class="active">Entrar</a></li>
         <li><a href="perfil.html">Meu perfil</a></li>
       </ul>
+
     </nav>
   </header>
 
+
   <main class="auth-container">
+
     <div class="auth-box">
+
       <!-- Alternador de Abas -->
       <div class="auth-tabs">
-        <button id="tab-login" class="tab-btn active">Entrar</button>
-        <button id="tab-cadastro" class="tab-btn">Cadastrar</button>
+
+        <button id="tab-login" class="tab-btn active">
+          Entrar
+        </button>
+
+        <button id="tab-cadastro" class="tab-btn">
+          Cadastrar
+        </button>
+
       </div>
+
 
       <!-- Formulário de Login -->
       <form id="form-login" class="auth-form active">
+
         <h2>Acesse sua conta</h2>
+
         <div class="input-group">
-          <label for="login-email">E-mail</label>
-          <input type="email" id="login-email" required placeholder="seu@email.com">
+
+          <label for="login-email">
+            E-mail
+          </label>
+
+          <input
+            type="email"
+            id="login-email"
+            required
+            placeholder="seu@email.com"
+          >
+
         </div>
+
+
         <div class="input-group">
-          <label for="login-senha">Senha</label>
-          <input type="password" id="login-senha" required placeholder="******">
+
+          <label for="login-senha">
+            Senha
+          </label>
+
+          <input
+            type="password"
+            id="login-senha"
+            required
+            placeholder="******"
+          >
+
         </div>
-        <button type="submit" class="btn-primary">Entrar</button>
+
+
+        <!-- Tipo de usuário no login -->
+        <div class="input-group tipo-usuario">
+
+          <label>
+            Você deseja entrar como:
+          </label>
+
+          <label class="opcao-tipo">
+
+            <input
+              type="radio"
+              name="tipo-login"
+              value="consumidor"
+              required
+            >
+
+            Consumidor
+
+          </label>
+
+
+          <label class="opcao-tipo">
+
+            <input
+              type="radio"
+              name="tipo-login"
+              value="produtor"
+              required
+            >
+
+            Produtor
+
+          </label>
+
+        </div>
+
+
+        <button type="submit" class="btn-primary">
+          Entrar
+        </button>
+
       </form>
+
 
       <!-- Formulário de Cadastro -->
       <form id="form-cadastro" class="auth-form hidden" novalidate>
 
-  <h2>Crie uma conta</h2>
-
-  <div class="input-group">
-    <label for="cad-nome">Nome Completo</label>
-
-    <input
-      type="text"
-      id="cad-nome"
-      name="nome"
-      required
-      minlength="3"
-      autocomplete="name"
-      placeholder="Seu nome"
-    >
-
-    <small class="erro-campo" id="erro-nome"></small>
-  </div>
+        <h2>Crie uma conta</h2>
 
 
-  <div class="input-group">
-    <label for="cad-email">E-mail</label>
+        <div class="input-group">
 
-    <input
-      type="email"
-      id="cad-email"
-      name="email"
-      required
-      autocomplete="email"
-      placeholder="seu@email.com"
-    >
+          <label for="cad-nome">
+            Nome Completo
+          </label>
 
-    <small class="erro-campo" id="erro-email"></small>
-  </div>
+          <input
+            type="text"
+            id="cad-nome"
+            name="nome"
+            required
+            minlength="3"
+            autocomplete="name"
+            placeholder="Seu nome"
+          >
 
+          <small
+            class="erro-campo"
+            id="erro-nome"
+          ></small>
 
-  <div class="input-group">
-    <label for="cad-senha">Senha</label>
-
-    <input
-      type="password"
-      id="cad-senha"
-      name="senha"
-      required
-      minlength="8"
-      autocomplete="new-password"
-      placeholder="Mínimo de 8 caracteres"
-    >
-
-    <small class="erro-campo" id="erro-senha"></small>
-  </div>
+        </div>
 
 
-  <div class="input-group">
-    <label for="cad-confirmar-senha">Confirmar senha</label>
+        <div class="input-group">
 
-    <input
-      type="password"
-      id="cad-confirmar-senha"
-      name="confirmarSenha"
-      required
-      autocomplete="new-password"
-      placeholder="Digite a senha novamente"
-    >
+          <label for="cad-email">
+            E-mail
+          </label>
 
-    <small class="erro-campo" id="erro-confirmar-senha"></small>
-  </div>
+          <input
+            type="email"
+            id="cad-email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="seu@email.com"
+          >
+
+          <small
+            class="erro-campo"
+            id="erro-email"
+          ></small>
+
+        </div>
 
 
-  <button type="submit" class="btn-primary">
-    Cadastrar
-  </button>
+        <div class="input-group">
 
-  <p
-    id="cadastro-sucesso"
-    class="mensagem-sucesso"
-    role="status"
-    aria-live="polite"
-  ></p>
+          <label for="cad-senha">
+            Senha
+          </label>
 
-</form>
+          <input
+            type="password"
+            id="cad-senha"
+            name="senha"
+            required
+            minlength="8"
+            autocomplete="new-password"
+            placeholder="Mínimo de 8 caracteres"
+          >
+
+          <small
+            class="erro-campo"
+            id="erro-senha"
+          ></small>
+
+        </div>
+
+
+        <div class="input-group">
+
+          <label for="cad-confirmar-senha">
+            Confirmar senha
+          </label>
+
+          <input
+            type="password"
+            id="cad-confirmar-senha"
+            name="confirmarSenha"
+            required
+            autocomplete="new-password"
+            placeholder="Digite a senha novamente"
+          >
+
+          <small
+            class="erro-campo"
+            id="erro-confirmar-senha"
+          ></small>
+
+        </div>
+
+
+        <!-- Tipo de usuário no cadastro -->
+        <div class="input-group tipo-usuario">
+
+          <label>
+            Você deseja se cadastrar como:
+          </label>
+
+          <label class="opcao-tipo">
+
+            <input
+              type="radio"
+              name="tipo-usuario"
+              value="consumidor"
+              required
+            >
+
+            Consumidor
+
+          </label>
+
+
+          <label class="opcao-tipo">
+
+            <input
+              type="radio"
+              name="tipo-usuario"
+              value="produtor"
+              required
+            >
+
+            Produtor
+
+          </label>
+
+          <small
+            class="erro-campo"
+            id="erro-tipo-usuario"
+          ></small>
+
+        </div>
+
+
+        <button type="submit" class="btn-primary">
+          Cadastrar
+        </button>
+
+
+        <p
+          id="cadastro-sucesso"
+          class="mensagem-sucesso"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+      </form>
+
     </div>
+
   </main>
 
+
   <footer>
+
     <div class="footer-container">
+
       <div>
+
         <h3>🌱 Agricultura Familiar</h3>
-        <p>Fortalecendo o campo e alimentando o Brasil.</p>
+
+        <p>
+          Fortalecendo o campo e alimentando o Brasil.
+        </p>
+
       </div>
 
+
       <div>
+
         <h4>Links rápidos</h4>
+
         <ul>
-          <li><a href="index.html">Início</a></li>
-          <li><a href="sobre.html">Sobre</a></li>
-          <li><a href="beneficios.html">Benefícios</a></li>
-          <li><a href="produtos.html">Produtos</a></li>
-          <li><a href="contato.html">Contato</a></li>
-          <li><a href="login.html">Entrar</a></li>
-          <li><a href="perfil.html">Meu perfil</a></li>
+
+          <li>
+            <a href="index.html">Início</a>
+          </li>
+
+          <li>
+            <a href="sobre.html">Sobre</a>
+          </li>
+
+          <li>
+            <a href="beneficios.html">Benefícios</a>
+          </li>
+
+          <li>
+            <a href="produtos.html">Produtos</a>
+          </li>
+
+          <li>
+            <a href="contato.html">Contato</a>
+          </li>
+
+          <li>
+            <a href="login.html">Entrar</a>
+          </li>
+
+          <li>
+            <a href="perfil.html">Meu perfil</a>
+          </li>
+
         </ul>
+
       </div>
 
+
       <div>
+
         <h4>Contato</h4>
-        <p>📧 contato@agricultura.com</p>
-        <p>📞 (75) 99999-9999</p>
+
+        <p>
+          📧 contato@agricultura.com
+        </p>
+
+        <p>
+          📞 (75) 99999-9999
+        </p>
+
       </div>
+
     </div>
+
 
     <div class="copyright">
-      © 2026 Agricultura Familiar <br>
+
+      © 2026 Agricultura Familiar
+
+      <br>
+
       Projeto integrador - Liga Steam / ArcelorMittal
+
     </div>
+
   </footer>
 
+
   <script src="assets/js/script.js"></script>
+
 </body>
+
 </html>

@@ -57,10 +57,22 @@ async function deletarConsumidor(id_consumidor) {
     return resultado.rows[0];
 }
 
+async function buscarConsumidorPorId(id_consumidor) {
+    const resultado = await pool.query(
+        `SELECT id_consumidor, nome, email, telefone
+         FROM consumidor
+         WHERE id_consumidor = $1;`,
+        [id_consumidor]
+    );
+
+    return resultado.rows[0];
+}
+
 module.exports = {
     buscarConsumidorPorEmail,
     criarConsumidor,
     buscarConsumidores,
     atualizarConsumidor,
-    deletarConsumidor   
+    deletarConsumidor,
+    buscarConsumidorPorId
 };

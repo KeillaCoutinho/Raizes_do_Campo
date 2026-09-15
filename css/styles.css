@@ -2545,3 +2545,18 @@ select:focus {
     }
 
 }
+
+#form-cadastro .tipo-usuario {
+  margin-top: 10px;
+}
+
+#form-cadastro .tipo-usuario > label {
+  margin-bottom: 8px;
+}
+
+#form-cadastro input[type="radio"] {
+  width: auto;
+  height: auto;
+  margin: 0 6px 0 0;
+  vertical-align: middle;
+}

@@ -6,6 +6,7 @@ const produtoRoutes = require('./routes/produtoRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
 const contatoRoutes = require('./routes/contatoRoutes');
 const consumidorRoutes = require('./routes/consumidorRoutes');
+const produtorRoutes = require('./routes/produtorRoutes');
 
 const session = require('express-session');
 
@@ -32,6 +33,7 @@ app.use(produtoRoutes);
 app.use(categoriaRoutes);
 app.use(contatoRoutes);
 app.use(consumidorRoutes);
+app.use(produtorRoutes);
 
 app.get('/', (req, res) => {
     res.send('Backend do Raízes do Campo funcionando! 🌱');

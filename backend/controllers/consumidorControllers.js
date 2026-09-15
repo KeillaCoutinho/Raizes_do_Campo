@@ -1,4 +1,6 @@
 const consumidorModel = require('../models/consumidorModel');
+const produtorModel = require('../models/produtorModel');
+
 //para as senhas serem criptografadas
 const bcrypt = require('bcrypt');
 
@@ -51,32 +53,52 @@ async function cadastrarConsumidor(req, res) {
     }
 }
 
-//função para fazer o login
 async function fazerLogin(req, res) {
     try {
-        const { email, senha } = req.body;
 
-        // Verifica se email e senha foram informados
-        if (!email || !senha) {
+        const { email, senha, tipoUsuario } = req.body;
+
+        // Verifica se email, senha e tipo de usuário foram informados
+        if (!email || !senha || !tipoUsuario) {
             return res.status(400).json({
-                erro: 'Email e senha são obrigatórios'
+                erro: 'Email, senha e tipo de usuário são obrigatórios'
             });
         }
 
-        // Procura o consumidor pelo email
-        const consumidor =
-            await consumidorModel.buscarConsumidorPorEmail(email);
+        let usuario;
+        let tipo;
 
-        // Se não encontrou o email
-        if (!consumidor) {
+        // Se for consumidor, procura na tabela consumidor
+        if (tipoUsuario === 'consumidor') {
+
+            usuario = await consumidorModel.buscarConsumidorPorEmail(email);
+            tipo = 'consumidor';
+
+        // Se for produtor, procura na tabela produtor
+        } else if (tipoUsuario === 'produtor') {
+
+            usuario = await produtorModel.buscarProdutorPorEmail(email);
+            tipo = 'produtor';
+
+        } else {
+
+            return res.status(400).json({
+                erro: 'Tipo de usuário inválido'
+            });
+        }
+
+        // Se não encontrou o usuário
+        if (!usuario) {
             return res.status(401).json({
                 erro: 'Email ou senha incorretos'
             });
         }
 
-        // Compara a senha informada com o hash salvo no banco
-        const senhaCorreta =
-            await bcrypt.compare(senha, consumidor.senha);
+        // Compara a senha informada com a senha criptografada no banco
+        const senhaCorreta = await bcrypt.compare(
+            senha,
+            usuario.senha
+        );
 
         // Se a senha estiver errada
         if (!senhaCorreta) {
@@ -85,22 +107,35 @@ async function fazerLogin(req, res) {
             });
         }
 
-        // Guarda o ID do usuário na Session
-        req.session.usuarioId = consumidor.id_consumidor;
+        // Guarda na Session o ID e o tipo do usuário
+        if (tipo === 'consumidor') {
+
+            req.session.usuarioId = usuario.id_consumidor;
+
+        } else {
+
+            req.session.usuarioId = usuario.id_produtor;
+        }
+
+        req.session.tipoUsuario = tipo;
 
         // Login realizado com sucesso
         res.json({
             mensagem: 'Login realizado com sucesso!',
-            consumidor: {
-                id_consumidor: consumidor.id_consumidor,
-                nome: consumidor.nome,
-                email: consumidor.email,
-                telefone: consumidor.telefone
+            tipoUsuario: tipo,
+            usuario: {
+                id: tipo === 'consumidor'
+                    ? usuario.id_consumidor
+                    : usuario.id_produtor,
+                nome: usuario.nome,
+                email: usuario.email,
+                telefone: usuario.telefone
             }
         });
 
     } catch (erro) {
-        console.error(erro);
+
+        console.error("ERRO AO REALIZAR LOGIN:", erro);
 
         res.status(500).json({
             erro: 'Erro ao realizar login'
@@ -185,10 +220,61 @@ async function deletarConsumidor(req, res) {
     }
 }
 
+async function buscarPerfil(req, res) {
+    try {
+        // Verifica se existe alguém logado
+        if (!req.session.usuarioId) {
+            return res.status(401).json({
+                erro: 'Nenhum usuário está logado'
+            });
+        }
+
+        const tipoUsuario = req.session.tipoUsuario;
+        let usuario;
+
+        // Busca os dados na tabela correta
+        if (tipoUsuario === 'consumidor') {
+            usuario = await consumidorModel.buscarConsumidorPorId(
+                req.session.usuarioId
+            );
+        } 
+        else if (tipoUsuario === 'produtor') {
+            usuario = await produtorModel.buscarProdutorPorId(
+                req.session.usuarioId
+            );
+        } 
+        else {
+            return res.status(401).json({
+                erro: 'Tipo de usuário inválido ou sessão expirada'
+            });
+        }
+
+        if (!usuario) {
+            return res.status(404).json({
+                erro: 'Usuário não encontrado'
+            });
+        }
+
+        // Retorna os dados do usuário + o tipo
+        res.json({
+            ...usuario,
+            tipoUsuario: tipoUsuario
+        });
+
+    } catch (erro) {
+        console.error(erro);
+
+        res.status(500).json({
+            erro: 'Erro ao buscar perfil'
+        });
+    }
+}
+
 module.exports = {
     cadastrarConsumidor,
     fazerLogin,
     listarConsumidores,
     atualizarConsumidor,
-    deletarConsumidor
+    deletarConsumidor,
+    buscarPerfil
 };
