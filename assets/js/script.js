@@ -419,7 +419,88 @@ if (formCadastro) {
 
 }
 
-    // 5. Scroll Reveal e Efeito Tilt nos Cards
+  // 5. Filtros do catálogo de produtos
+  const filtrosProdutos = document.querySelectorAll(".filtro");
+  const cardsProdutos = document.querySelectorAll(".produto-card");
+  const contadorProdutos = document.querySelector(".catalogo-resultados strong");
+  const buscaProduto = document.getElementById("buscarProduto");
+  const ordenarProdutos = document.getElementById("ordenarProdutos");
+  const gradeProdutos = document.querySelector(".produtos-grid");
+  const ordemOriginal = Array.from(cardsProdutos);
+  let categoriaAtual = "todos";
+
+  if (filtrosProdutos.length > 0 && cardsProdutos.length > 0) {
+    function atualizarProdutos() {
+      const termoBusca = buscaProduto
+        ? buscaProduto.value.trim().toLocaleLowerCase("pt-BR")
+        : "";
+      let produtosVisiveis = 0;
+
+      cardsProdutos.forEach((card) => {
+        const textoCard = card.textContent.toLocaleLowerCase("pt-BR");
+        const correspondeCategoria =
+          categoriaAtual === "todos" ||
+          card.dataset.categoria === categoriaAtual;
+        const correspondeBusca =
+          termoBusca === "" ||
+          card.dataset.nome.toLocaleLowerCase("pt-BR").includes(termoBusca) ||
+          textoCard.includes(termoBusca);
+        const corresponde = correspondeCategoria && correspondeBusca;
+
+        card.hidden = !corresponde;
+
+        if (corresponde) {
+          produtosVisiveis += 1;
+        }
+      });
+
+      if (contadorProdutos) {
+        contadorProdutos.textContent = produtosVisiveis;
+      }
+    }
+
+    filtrosProdutos.forEach((filtro) => {
+      filtro.addEventListener("click", () => {
+        filtrosProdutos.forEach((item) => item.classList.remove("active"));
+        filtro.classList.add("active");
+        categoriaAtual = filtro.dataset.categoria;
+        atualizarProdutos();
+      });
+    });
+
+    if (buscaProduto) {
+      buscaProduto.addEventListener("input", atualizarProdutos);
+    }
+
+    if (ordenarProdutos && gradeProdutos) {
+      ordenarProdutos.addEventListener("change", () => {
+        const criterio = ordenarProdutos.value;
+        const cardsOrdenados = Array.from(cardsProdutos);
+
+        if (criterio === "original") {
+          cardsOrdenados.splice(0, cardsOrdenados.length, ...ordemOriginal);
+        } else if (criterio === "nome") {
+          cardsOrdenados.sort((cardA, cardB) =>
+            cardA.dataset.nome.localeCompare(cardB.dataset.nome, "pt-BR")
+          );
+        } else if (criterio === "menor-preco") {
+          cardsOrdenados.sort(
+            (cardA, cardB) =>
+              Number(cardA.dataset.preco) - Number(cardB.dataset.preco)
+          );
+        } else if (criterio === "maior-preco") {
+          cardsOrdenados.sort(
+            (cardA, cardB) =>
+              Number(cardB.dataset.preco) - Number(cardA.dataset.preco)
+          );
+        }
+
+        cardsOrdenados.forEach((card) => gradeProdutos.appendChild(card));
+      });
+    }
+  }
+
+    // 6. Scroll Reveal e Efeito Tilt nos Cards
 
   // Seleciona TODOS os elementos que devem aparecer ao rolar
   const revealElements = document.querySelectorAll(".scroll-reveal");
@@ -480,7 +561,70 @@ if (formCadastro) {
     });
   }
 
-  // 6. Slideshow da página inicial
+  // 7. Galeria e lightbox da página Sobre
+  const galleryItems = document.querySelectorAll(".gallery-item");
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImage = document.getElementById("lightboxImage");
+  const lightboxClose = document.querySelector(".lightbox-close");
+  const lightboxPrevious = document.querySelector(".lightbox-prev");
+  const lightboxNext = document.querySelector(".lightbox-next");
+
+  if (
+    galleryItems.length > 0 &&
+    lightbox &&
+    lightboxImage &&
+    lightboxClose &&
+    lightboxPrevious &&
+    lightboxNext
+  ) {
+    let imagemAtual = 0;
+
+    function mostrarImagem(indice) {
+      imagemAtual = (indice + galleryItems.length) % galleryItems.length;
+      const imagem = galleryItems[imagemAtual].querySelector("img");
+
+      lightboxImage.src = imagem.src;
+      lightboxImage.alt = imagem.alt;
+    }
+
+    function abrirLightbox(indice) {
+      mostrarImagem(indice);
+      lightbox.classList.add("active");
+      lightbox.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      lightboxClose.focus();
+    }
+
+    function fecharLightbox() {
+      lightbox.classList.remove("active");
+      lightbox.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    galleryItems.forEach((item, indice) => {
+      item.addEventListener("click", () => abrirLightbox(indice));
+    });
+
+    lightboxClose.addEventListener("click", fecharLightbox);
+    lightboxPrevious.addEventListener("click", () => mostrarImagem(imagemAtual - 1));
+    lightboxNext.addEventListener("click", () => mostrarImagem(imagemAtual + 1));
+
+    lightbox.addEventListener("click", (evento) => {
+      if (evento.target === lightbox) {
+        fecharLightbox();
+      }
+    });
+
+    document.addEventListener("keydown", (evento) => {
+      if (!lightbox.classList.contains("active")) return;
+
+      if (evento.key === "Escape") fecharLightbox();
+      if (evento.key === "ArrowLeft") mostrarImagem(imagemAtual - 1);
+      if (evento.key === "ArrowRight") mostrarImagem(imagemAtual + 1);
+    });
+  }
+
+  // 8. Slideshow da página inicial
   const slides = document.querySelectorAll(".slide");
   const dots = document.querySelectorAll(".dot");
   const prevBtn = document.querySelector(".slide-btn.prev");
