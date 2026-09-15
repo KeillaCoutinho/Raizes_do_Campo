@@ -12,12 +12,13 @@ async function buscarProdutorPorEmail(email) {
 
 async function garantirTabelaResumoProducao() {
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS resumo_producao (
-            id_produtor INTEGER PRIMARY KEY REFERENCES produtor(id_produtor) ON DELETE CASCADE,
-            ultima_colheita DATE,
-            total_registros INTEGER NOT NULL DEFAULT 0,
-            unidade_mais_utilizada VARCHAR(100),
-            atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        CREATE TABLE IF NOT EXISTS registro_producao (
+            id_registro SERIAL PRIMARY KEY,
+            id_produtor INTEGER NOT NULL REFERENCES produtor(id_produtor) ON DELETE CASCADE,
+            data_colheita DATE NOT NULL,
+            produto VARCHAR(150) NOT NULL,
+            peso NUMERIC(12, 2) NOT NULL CHECK (peso > 0),
+            criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
     `);
 }
@@ -26,34 +27,37 @@ async function buscarResumoProducao(id_produtor) {
     await garantirTabelaResumoProducao();
 
     const resultado = await pool.query(
-        `SELECT ultima_colheita, total_registros, unidade_mais_utilizada, atualizado_em
-         FROM resumo_producao
-         WHERE id_produtor = $1;`,
+        `SELECT
+            COUNT(*)::INTEGER AS total_registros,
+            (ARRAY_AGG(data_colheita ORDER BY data_colheita DESC, id_registro DESC))[1] AS ultima_colheita,
+            (ARRAY_AGG(produto ORDER BY data_colheita DESC, id_registro DESC))[1] AS produto,
+                        (ARRAY_AGG(peso ORDER BY data_colheita DESC, id_registro DESC))[1] AS peso,
+                        COALESCE(AVG(produto_cadastrado.preco), 0)::NUMERIC(12, 2) AS valor_medio
+         FROM registro_producao
+                 LEFT JOIN produto AS produto_cadastrado
+                     ON produto_cadastrado.nome = registro_producao.produto
+                    AND produto_cadastrado.id_produtor = registro_producao.id_produtor
+         WHERE registro_producao.id_produtor = $1;`,
         [id_produtor]
     );
 
-    return resultado.rows[0] || null;
+    return resultado.rows[0];
 }
 
-async function salvarResumoProducao(
+async function salvarRegistroProducao(
     id_produtor,
-    ultima_colheita,
-    total_registros,
-    unidade_mais_utilizada
+    data_colheita,
+    produto,
+    peso
 ) {
     await garantirTabelaResumoProducao();
 
     const resultado = await pool.query(
-        `INSERT INTO resumo_producao
-            (id_produtor, ultima_colheita, total_registros, unidade_mais_utilizada, atualizado_em)
-         VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
-         ON CONFLICT (id_produtor) DO UPDATE SET
-            ultima_colheita = EXCLUDED.ultima_colheita,
-            total_registros = EXCLUDED.total_registros,
-            unidade_mais_utilizada = EXCLUDED.unidade_mais_utilizada,
-            atualizado_em = CURRENT_TIMESTAMP
-         RETURNING ultima_colheita, total_registros, unidade_mais_utilizada, atualizado_em;`,
-        [id_produtor, ultima_colheita || null, total_registros, unidade_mais_utilizada || null]
+        `INSERT INTO registro_producao
+            (id_produtor, data_colheita, produto, peso)
+         VALUES ($1, $2, $3, $4)
+         RETURNING id_registro, data_colheita, produto, peso, criado_em;`,
+        [id_produtor, data_colheita, produto, peso]
     );
 
     return resultado.rows[0];
@@ -102,5 +106,5 @@ module.exports = {
     buscarProdutorPorId,
     criarProdutor,
     buscarResumoProducao,
-    salvarResumoProducao
+    salvarRegistroProducao
 };

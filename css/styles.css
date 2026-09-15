@@ -1021,6 +1021,58 @@ select:focus {
     object-fit: cover;
 }
 
+.anuncio-imagem {
+    display: block;
+    width: 72px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: zoom-in;
+}
+
+.anuncio-sem-imagem {
+    color: #777;
+    font-size: 0.8rem;
+}
+
+.modal-imagem-anuncio {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: rgba(0, 0, 0, 0.82);
+}
+
+.modal-imagem-anuncio.aberto {
+    display: flex;
+}
+
+.modal-imagem-anuncio img {
+    max-width: min(900px, 90vw);
+    max-height: 85vh;
+    border-radius: 12px;
+    object-fit: contain;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.modal-imagem-fechar {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #f2f8e6;
+    color: #102109;
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
 /* Botões de Ação na Tabela */
 .btn-edit {
     background-color: #d9a726;

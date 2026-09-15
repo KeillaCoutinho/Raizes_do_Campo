@@ -89,10 +89,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 .value
                 .trim();
 
+            const imagemArquivo = document
+                .getElementById("imagem")
+                .files[0];
+
             try {
                 const itemId = document
                     .getElementById("item-id")
                     .value;
+
+                const imagem = imagemArquivo
+                    ? await lerImagemComoDataUrl(imagemArquivo)
+                    : null;
 
                 const resposta = await fetch(
                     itemId
@@ -113,7 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             nome: titulo,
                             descricao: descricao,
                             preco: Number(preco),
-                            unidade_medida: "unidade"
+                            unidade_medida: "unidade",
+                            imagem: imagem
                         })
                     }
                 );
@@ -158,6 +167,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function lerImagemComoDataUrl(arquivo) {
+        return new Promise((resolve, reject) => {
+            const leitor = new FileReader();
+
+            leitor.addEventListener("load", () => resolve(leitor.result));
+            leitor.addEventListener("error", () => reject(leitor.error));
+            leitor.readAsDataURL(arquivo);
+        });
+    }
+
 
     // ==========================================
     // 3. CARREGAR MEUS PRODUTOS
@@ -190,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             atualizarRelatorio(produtos);
-            carregarResumoProducao();
+            await carregarResumoProducao();
 
             const listaItens =
                 document.getElementById("lista-itens");
@@ -201,17 +220,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
             listaItens.innerHTML = "";
 
+            const nomesCategorias = {
+                2: "Frutas",
+                3: "Verduras",
+                4: "Legumes",
+                5: "Raízes",
+                6: "Grãos",
+                7: "Temperos",
+                8: "Hortaliças",
+                9: "Derivados",
+                10: "Orgânicos",
+                11: "Artesanais"
+            };
+
             produtos.forEach((produto) => {
                 const linha =
                     document.createElement("tr");
 
                 linha.innerHTML = `
                     <td>
+                        ${produto.imagem
+                            ? `<img class="anuncio-imagem" src="${produto.imagem}" alt="Imagem de ${produto.nome}">`
+                            : "<span class=\"anuncio-sem-imagem\">Sem imagem</span>"
+                        }
+                    </td>
+
+                    <td>
                         ${produto.nome}
                     </td>
 
                     <td>
-                        ${produto.id_categoria}
+                        ${nomesCategorias[produto.id_categoria] || "Não informada"}
                     </td>
 
                     <td>
@@ -219,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </td>
 
                     <td>
-                        ${produto.unidade_medida || "-"}
+                        ${produto.descricao || "-"}
                     </td>
 
                     <td>
@@ -241,6 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 listaItens.appendChild(linha);
             });
+
+            configurarImagensDosAnuncios();
 
             document.querySelectorAll(".btn-excluir").forEach((botao) => {
                 botao.addEventListener("click", () => {
@@ -273,13 +314,45 @@ document.addEventListener("DOMContentLoaded", () => {
             if (listaItens) {
                 listaItens.innerHTML = `
                     <tr>
-                        <td colspan="5">
+                        <td colspan="6">
                             Não foi possível carregar seus produtos.
                         </td>
                     </tr>
                 `;
             }
         }
+    }
+
+    function configurarImagensDosAnuncios() {
+        const modal = document.getElementById("modal-imagem-anuncio");
+        const imagemAmpliada = document.getElementById("imagem-anuncio-ampliada");
+        const botaoFechar = document.getElementById("fechar-imagem-anuncio");
+
+        if (!modal || !imagemAmpliada || !botaoFechar) {
+            return;
+        }
+
+        const fecharModal = () => {
+            modal.classList.remove("aberto");
+            modal.setAttribute("aria-hidden", "true");
+            imagemAmpliada.src = "";
+        };
+
+        document.querySelectorAll(".anuncio-imagem").forEach((imagem) => {
+            imagem.addEventListener("click", () => {
+                imagemAmpliada.src = imagem.src;
+                imagemAmpliada.alt = imagem.alt;
+                modal.classList.add("aberto");
+                modal.setAttribute("aria-hidden", "false");
+            });
+        });
+
+        botaoFechar.onclick = fecharModal;
+        modal.onclick = (evento) => {
+            if (evento.target === modal) {
+                fecharModal();
+            }
+        };
     }
 
     function editarProduto(produto) {
@@ -327,17 +400,12 @@ document.addEventListener("DOMContentLoaded", () => {
             unidades.set(unidade, (unidades.get(unidade) || 0) + 1);
         });
 
-        const precoMedio = totalProdutos > 0
-            ? produtos.reduce((total, produto) =>
-                total + Number(produto.preco || 0), 0
-            ) / totalProdutos
-            : 0;
-
         const elementoProdutos = document.getElementById("relatorio-produtos");
         const elementoCategorias = document.getElementById("relatorio-categorias");
         const elementoPrecoMedio = document.getElementById("relatorio-preco-medio");
         const listaCategorias = document.getElementById("relatorio-categorias-lista");
         const elementoStatus = document.getElementById("relatorio-status");
+        const campoProduto = document.getElementById("produto-colhido");
 
         if (elementoProdutos) {
             elementoProdutos.textContent = totalProdutos;
@@ -348,13 +416,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (elementoPrecoMedio) {
-            elementoPrecoMedio.textContent = totalProdutos > 0
-                ? `R$ ${precoMedio.toFixed(2).replace(".", ",")}`
-                : "R$ 0,00";
+            elementoPrecoMedio.textContent = "R$ 0,00";
         }
 
         if (elementoStatus) {
             elementoStatus.textContent = "Dados atualizados";
+        }
+
+        if (campoProduto) {
+            const produtoSelecionado = campoProduto.value;
+
+            campoProduto.innerHTML = `
+                <option value="">Selecione um produto</option>
+                ${produtos.map((produto) => `
+                    <option value="${produto.nome}">${produto.nome}</option>
+                `).join("")}
+            `;
+
+            if (produtos.some((produto) => produto.nome === produtoSelecionado)) {
+                campoProduto.value = produtoSelecionado;
+            }
         }
 
         if (listaCategorias) {
@@ -399,12 +480,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function exibirResumoProducao(resumo) {
         const ultimaColheita = document.getElementById("relatorio-ultima-colheita");
-        const registros = document.getElementById("relatorio-registros");
         const producao = document.getElementById("relatorio-producao");
-        const unidade = document.getElementById("relatorio-unidade");
-        const campoData = document.getElementById("ultima-colheita");
-        const campoRegistros = document.getElementById("total-registros");
-        const campoUnidade = document.getElementById("unidade-mais-utilizada");
+        const produto = document.getElementById("relatorio-produto");
+        const peso = document.getElementById("relatorio-peso");
+        const valorMedio = document.getElementById("relatorio-preco-medio");
+        const campoData = document.getElementById("data-colheita");
+        const campoProduto = document.getElementById("produto-colhido");
+        const campoPeso = document.getElementById("peso-colhido");
 
         if (ultimaColheita) {
             ultimaColheita.textContent = resumo.ultima_colheita
@@ -412,16 +494,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 : "Não informada";
         }
 
-        if (registros) {
-            registros.textContent = resumo.total_registros ?? 0;
-        }
-
         if (producao) {
             producao.textContent = resumo.total_registros ?? 0;
         }
 
-        if (unidade) {
-            unidade.textContent = resumo.unidade_mais_utilizada || "Não informada";
+        if (produto) {
+            produto.textContent = resumo.produto || "Não informado";
+        }
+
+        if (peso) {
+            peso.textContent = resumo.peso
+                ? `${Number(resumo.peso).toFixed(2).replace(".", ",")} kg`
+                : "Não informado";
+        }
+
+        if (valorMedio) {
+            valorMedio.textContent = `R$ ${Number(resumo.valor_medio || 0)
+                .toFixed(2)
+                .replace(".", ",")}`;
         }
 
         if (campoData) {
@@ -430,12 +520,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 : "";
         }
 
-        if (campoRegistros) {
-            campoRegistros.value = resumo.total_registros ?? 0;
+        if (campoProduto && resumo.produto) {
+            campoProduto.value = resumo.produto;
         }
 
-        if (campoUnidade) {
-            campoUnidade.value = resumo.unidade_mais_utilizada || "";
+        if (campoPeso) {
+            campoPeso.value = resumo.peso || "";
         }
     }
 
@@ -451,6 +541,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (!resposta.ok) {
+                console.error(
+                    "Erro ao carregar resumo da produção:",
+                    await resposta.text()
+                );
                 return;
             }
 
@@ -468,18 +562,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 const resposta = await fetch(`${apiUrl}/resumo-producao`, {
-                    method: "PUT",
+                    method: "POST",
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        ultima_colheita: document.getElementById("ultima-colheita").value,
-                        total_registros: document.getElementById("total-registros").value,
-                        unidade_mais_utilizada: document
-                            .getElementById("unidade-mais-utilizada")
-                            .value
-                            .trim()
+                        data_colheita: document.getElementById("data-colheita").value,
+                        produto: document.getElementById("produto-colhido").value,
+                        peso: document.getElementById("peso-colhido").value
                     })
                 });
 
@@ -491,7 +582,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 exibirResumoProducao(resultado);
-                alert("Resumo da produção atualizado com sucesso!");
+                formResumoProducao.reset();
+                alert("Produção registrada com sucesso!");
             } catch (erro) {
                 console.error("Erro ao salvar resumo da produção:", erro);
                 alert("Não foi possível conectar com o servidor.");

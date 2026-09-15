@@ -83,9 +83,11 @@ async function buscarResumoProducao(req, res) {
         );
 
         res.json(resumo || {
-            ultima_colheita: null,
             total_registros: 0,
-            unidade_mais_utilizada: null
+            ultima_colheita: null,
+            produto: null,
+            peso: null,
+            valor_medio: 0
         });
     } catch (erro) {
         console.error('ERRO AO BUSCAR RESUMO DA PRODUÇÃO:', erro);
@@ -95,38 +97,43 @@ async function buscarResumoProducao(req, res) {
     }
 }
 
-async function atualizarResumoProducao(req, res) {
+async function registrarProducao(req, res) {
     if (!validarSessaoProdutor(req, res)) {
         return;
     }
 
     const {
-        ultima_colheita,
-        total_registros,
-        unidade_mais_utilizada
+        data_colheita,
+        produto,
+        peso
     } = req.body;
 
-    const total = Number(total_registros);
+    const pesoNumerico = Number(peso);
 
-    if (!Number.isInteger(total) || total < 0) {
+    if (!data_colheita || !produto || !produto.trim() ||
+        !Number.isFinite(pesoNumerico) || pesoNumerico <= 0) {
         return res.status(400).json({
-            erro: 'O total de registros deve ser um número inteiro igual ou maior que zero'
+            erro: 'Informe a data, o produto e um peso maior que zero'
         });
     }
 
     try {
-        const resumo = await produtorModel.salvarResumoProducao(
+        await produtorModel.salvarRegistroProducao(
             req.session.usuarioId,
-            ultima_colheita,
-            total,
-            unidade_mais_utilizada
+            data_colheita,
+            produto.trim(),
+            pesoNumerico
         );
 
-        res.json(resumo);
+        const resumo = await produtorModel.buscarResumoProducao(
+            req.session.usuarioId
+        );
+
+        res.status(201).json(resumo);
     } catch (erro) {
-        console.error('ERRO AO SALVAR RESUMO DA PRODUÇÃO:', erro);
+        console.error('ERRO AO REGISTRAR PRODUÇÃO:', erro);
         res.status(500).json({
-            erro: 'Erro ao salvar resumo da produção'
+            erro: 'Erro ao registrar produção'
         });
     }
 }
@@ -134,5 +141,5 @@ async function atualizarResumoProducao(req, res) {
 module.exports = {
     cadastrarProdutor,
     buscarResumoProducao,
-    atualizarResumoProducao
+    registrarProducao
 };
