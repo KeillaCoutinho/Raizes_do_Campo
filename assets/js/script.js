@@ -67,6 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const formCrud = document.getElementById("form-crud");
 
+    function lerImagemComoDataUrl(arquivo) {
+        return new Promise((resolve, reject) => {
+            const leitor = new FileReader();
+
+            leitor.onload = () => resolve(leitor.result);
+            leitor.onerror = () => reject(new Error("Não foi possível ler a imagem."));
+            leitor.readAsDataURL(arquivo);
+        });
+    }
+
     if (formCrud) {
         formCrud.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -89,10 +99,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 .value
                 .trim();
 
+            const imagemArquivo = document
+                .getElementById("imagem")
+                .files[0];
+
             try {
                 const itemId = document
                     .getElementById("item-id")
                     .value;
+
+                const imagem = imagemArquivo
+                    ? await lerImagemComoDataUrl(imagemArquivo)
+                    : null;
 
                 const resposta = await fetch(
                     itemId
@@ -113,7 +131,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             nome: titulo,
                             descricao: descricao,
                             preco: Number(preco),
-                            unidade_medida: "unidade"
+                            unidade_medida: "unidade",
+                            imagem
                         })
                     }
                 );
@@ -217,7 +236,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 const linha =
                     document.createElement("tr");
 
+                const imagemHtml = produto.imagem
+                    ? `<a href="${produto.imagem}" target="_blank" rel="noopener noreferrer" title="Abrir imagem em nova aba">
+                            <img src="${produto.imagem}" alt="Imagem de ${produto.nome}" class="imagem-anuncio">
+                       </a>`
+                    : "<span class=\"sem-imagem\">Sem imagem</span>";
+
                 linha.innerHTML = `
+                    <td>
+                        ${imagemHtml}
+                    </td>
+
                     <td>
                         ${produto.nome}
                     </td>
@@ -227,11 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </td>
 
                     <td>
-                        R$ ${Number(produto.preco).toFixed(2)}
-                    </td>
-
-                    <td>
-                        ${produto.unidade_medida || "-"}
+                        R$ ${Number(produto.preco || 0).toFixed(2).replace(".", ",")}
                     </td>
 
                     <td>
@@ -476,7 +501,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="producao-registro">
                             <strong>${producao.produto}</strong>
                             <span>${Number(producao.quantidade).toFixed(2)} ${producao.unidade_medida || "unidades"}</span>
-                            <small>${producao.data_colheita ? producao.data_colheita.split("T")[0].split("-").reverse().join("/") : "Data não informada"}</small>
+                            <small>${formatarDataColheita(producao.data_colheita)}</small>
                         </div>
                     `).join("")}
                 `;
@@ -484,6 +509,91 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Erro ao carregar registros de produção:", erro);
         }
     }
+
+    function formatarDataColheita(data) {
+        return data
+            ? data.split("T")[0].split("-").reverse().join("/")
+            : "Data não informada";
+    }
+
+    function escaparHtml(valor) {
+        return String(valor ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    async function abrirHistoricoColheitas() {
+        const modal = document.getElementById("modal-historico-colheitas");
+        const lista = document.getElementById("historico-colheitas-lista");
+        const status = document.getElementById("historico-colheitas-status");
+
+        if (!modal || !lista || !status) return;
+
+        modal.hidden = false;
+        document.body.classList.add("modal-aberto");
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+        lista.innerHTML = "";
+        status.textContent = "Carregando histórico...";
+
+        try {
+            const resposta = await fetch(`${apiUrl}/producoes`, {
+                method: "GET",
+                credentials: "include"
+            });
+            const producoes = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(producoes.erro || "Erro ao carregar histórico.");
+            }
+
+            status.textContent = `${producoes.length} registro(s) encontrado(s)`;
+            lista.innerHTML = producoes.length === 0
+                ? "<tr><td colspan=\"4\">Nenhuma colheita cadastrada.</td></tr>"
+                : producoes.map((producao) => `
+                    <tr>
+                        <td>${escaparHtml(formatarDataColheita(producao.data_colheita))}</td>
+                        <td>${escaparHtml(producao.produto)}</td>
+                        <td>${escaparHtml(`${Number(producao.quantidade).toFixed(2)} ${producao.unidade_medida || "unidades"}`)}</td>
+                        <td>${escaparHtml(producao.observacoes || "Sem observações")}</td>
+                    </tr>
+                `).join("");
+        } catch (erro) {
+            console.error("Erro ao carregar histórico de colheitas:", erro);
+            status.textContent = erro.message || "Não foi possível carregar o histórico.";
+        }
+    }
+
+    function fecharHistoricoColheitas() {
+        const modal = document.getElementById("modal-historico-colheitas");
+
+        if (!modal) return;
+
+        modal.hidden = true;
+        document.body.classList.remove("modal-aberto");
+    }
+
+    const botaoHistorico = document.getElementById("abrir-historico-colheitas");
+    const botaoFecharHistorico = document.getElementById("fechar-historico-colheitas");
+    const modalHistorico = document.getElementById("modal-historico-colheitas");
+
+    botaoHistorico?.addEventListener("click", abrirHistoricoColheitas);
+    botaoFecharHistorico?.addEventListener("click", fecharHistoricoColheitas);
+    modalHistorico?.addEventListener("click", (evento) => {
+        if (evento.target === modalHistorico) {
+            fecharHistoricoColheitas();
+        }
+    });
+    document.addEventListener("keydown", (evento) => {
+        if (evento.key === "Escape") {
+            fecharHistoricoColheitas();
+        }
+    });
 
     const formResumoProducao = document.getElementById("form-resumo-producao");
 

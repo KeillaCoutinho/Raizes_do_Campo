@@ -75,7 +75,8 @@ async function cadastrarProduto(req, res) {
             nome,
             descricao,
             preco,
-            unidade_medida
+            unidade_medida,
+            imagem
         } = req.body;
 
         // O produtor vem da sessão, não do formulário
@@ -87,7 +88,8 @@ async function cadastrarProduto(req, res) {
             nome,
             descricao,
             preco,
-            unidade_medida
+            unidade_medida,
+            imagem
         );
 
         res.status(201).json(produto);
@@ -126,7 +128,8 @@ async function atualizarProduto(req, res) {
             nome,
             descricao,
             preco,
-            unidade_medida
+            unidade_medida,
+            imagem
         } = req.body;
 
         const id_produtor = req.session.usuarioId;
@@ -138,6 +141,7 @@ async function atualizarProduto(req, res) {
             descricao,
             preco,
             unidade_medida,
+            imagem,
             id_produtor
         );
 

@@ -1141,6 +1141,24 @@ select:focus {
     object-fit: cover;
 }
 
+.imagem-anuncio {
+    display: block;
+    width: 96px;
+    height: 72px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.imagem-anuncio:hover {
+    transform: scale(1.04);
+    border-color: #9bd58e;
+}
+
+.sem-imagem {
+    color: rgba(234, 247, 219, 0.62);
+    font-size: 0.85rem;
+}
+
 /* Botões de Ação na Tabela */
 .btn-edit {
     background-color: #d9a726;
@@ -1424,14 +1442,16 @@ select:focus {
 }
 
 .lista-producoes {
-    margin-top: 24px;
-    border-top: 1px solid var(--border);
-    padding-top: 18px;
+    margin-top: 22px;
+    padding: 16px 18px;
+    border: 1px solid rgba(16, 33, 9, 0.16);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
 }
 
 .lista-producoes h4 {
-    margin: 0 0 12px;
-    color: var(--text);
+    margin: 0 0 10px;
+    color: #18321a;
 }
 
 .producao-registro {
@@ -1446,7 +1466,125 @@ select:focus {
 .producao-registro span,
 .producao-registro small,
 .lista-producoes > p {
-    color: var(--muted);
+    color: #315b39;
+}
+
+.producao-registro strong {
+    color: #18321a;
+}
+
+.historico-trigger {
+    margin-top: 16px;
+    padding: 11px 18px;
+    border: 1px solid rgba(16, 33, 9, 0.28);
+    background: #315b39;
+    color: #f2f8e9;
+    box-shadow: 0 6px 16px rgba(16, 33, 9, 0.14);
+}
+
+.historico-trigger:hover {
+    background: #244b2d;
+    color: #ffffff;
+}
+
+.historico-modal[hidden] {
+    display: none;
+}
+
+.historico-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(3, 10, 5, 0.76);
+}
+
+.historico-modal-conteudo {
+    width: min(900px, 100%);
+    max-height: min(720px, 90vh);
+    overflow: auto;
+    padding: 24px;
+    border: 1px solid rgba(155, 213, 142, 0.25);
+    border-radius: 12px;
+    background: #101d13;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+}
+
+.historico-modal-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+.historico-modal-cabecalho h3 {
+    margin: 4px 0 0;
+    color: #eaf7db;
+}
+
+.historico-fechar {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(234, 247, 219, 0.2);
+    border-radius: 50%;
+    background: transparent;
+    color: #eaf7db;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.historico-fechar:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.historico-status {
+    min-height: 24px;
+    margin-bottom: 12px;
+    color: rgba(234, 247, 219, 0.7);
+}
+
+.historico-tabela-wrapper {
+    overflow-x: auto;
+}
+
+.historico-tabela {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.historico-tabela th,
+.historico-tabela td {
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+    vertical-align: top;
+}
+
+.historico-tabela th {
+    background: rgba(255, 255, 255, 0.05);
+    color: #eaf7db;
+}
+
+.historico-tabela td {
+    color: rgba(234, 247, 219, 0.82);
+}
+
+body.modal-aberto {
+    overflow: hidden;
+}
+
+@media (max-width: 640px) {
+    .historico-modal {
+        padding: 12px;
+    }
+
+    .historico-modal-conteudo {
+        padding: 18px;
+    }
 }
 
 

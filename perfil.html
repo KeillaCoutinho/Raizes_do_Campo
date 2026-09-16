@@ -693,6 +693,55 @@
 
                         <div id="lista-producoes" class="lista-producoes" aria-live="polite"></div>
 
+                        <button
+                            type="button"
+                            id="abrir-historico-colheitas"
+                            class="btn-secondary historico-trigger"
+                        >
+                            Ver histórico de colheitas
+                        </button>
+
+                        <div
+                            id="modal-historico-colheitas"
+                            class="historico-modal"
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="historico-colheitas-titulo"
+                            hidden
+                        >
+                            <div class="historico-modal-conteudo">
+                                <div class="historico-modal-cabecalho">
+                                    <div>
+                                        <span class="card-kicker">Produção</span>
+                                        <h3 id="historico-colheitas-titulo">Histórico de colheitas</h3>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        id="fechar-historico-colheitas"
+                                        class="historico-fechar"
+                                        aria-label="Fechar histórico de colheitas"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+
+                                <div id="historico-colheitas-status" class="historico-status" aria-live="polite"></div>
+                                <div class="historico-tabela-wrapper">
+                                    <table class="historico-tabela">
+                                        <thead>
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Produto</th>
+                                                <th>Quantidade</th>
+                                                <th>Observações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="historico-colheitas-lista"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
