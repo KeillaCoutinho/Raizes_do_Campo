@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function carregarProdutos() {
         try {
             const resposta = await fetch(
-                "http://127.0.0.1:3000/meus-produtos",
+                `${apiUrl}/meus-produtos`,
                 {
                     method: "GET",
                     credentials: "include"
@@ -546,7 +546,7 @@ async function excluirProduto(id_produto) {
 
     try {
         const resposta = await fetch(
-            `http://127.0.0.1:3000/produtos/${id_produto}`,
+            `${apiUrl}/produtos/${id_produto}`,
             {
                 method: "DELETE",
                 credentials: "include"
@@ -751,7 +751,7 @@ async function excluirProduto(id_produto) {
                 try {
 
                     const resposta = await fetch(
-                        "http://localhost:3000/contato",
+                        `${apiUrl}/contato`,
                         {
                             method: "POST",
 
@@ -1122,8 +1122,8 @@ async function excluirProduto(id_produto) {
                     // Define a rota conforme o tipo
                     const urlCadastro =
                         tipoUsuario === "produtor"
-                            ? "http://localhost:3000/produtores"
-                            : "http://localhost:3000/consumidores";
+                            ? `${apiUrl}/produtores`
+                            : `${apiUrl}/consumidores`;
 
 
                     // Envia para o backend
@@ -1248,7 +1248,7 @@ async function excluirProduto(id_produto) {
     if (formPerfil && userName && userEmail) {
 
         fetch(
-            "http://127.0.0.1:3000/perfil",
+            `${apiUrl}/perfil`,
             {
                 method: "GET",
                 credentials: "include"
