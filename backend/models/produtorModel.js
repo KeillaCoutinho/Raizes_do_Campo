@@ -27,14 +27,42 @@ async function buscarResumoProducao(id_produtor) {
 
 async function listarProducoes(id_produtor) {
     const resultado = await pool.query(
-        `SELECT p.id_producao, p.id_produto, prod.nome AS produto,
-                prod.unidade_medida, p.quantidade, p.data_colheita,
-                p.observacoes
-         FROM producao p
-         JOIN produto prod ON prod.id_produto = p.id_produto
-         WHERE p.id_produtor = $1
-         ORDER BY p.data_colheita DESC NULLS LAST, p.id_producao DESC;`,
+        `SELECT id_producao, id_produto, produtor, cidade, estado,
+                produto, unidade_medida, id_categoria, categoria,
+                quantidade, data_colheita, observacoes
+         FROM public.vw_producao_detalhada
+         WHERE id_produtor = $1
+         ORDER BY data_colheita DESC NULLS LAST, id_producao DESC;`,
         [id_produtor]
+    );
+
+    return resultado.rows;
+}
+
+async function buscarResumoProducaoPorCategoria(id_produtor) {
+    const resultado = await pool.query(
+        `SELECT id_categoria, categoria, quantidade_produtos,
+                quantidade_produtores, quantidade_registros_producao,
+                producao_total, producao_media
+      FROM (
+          SELECT c.id_categoria,
+              c.nome AS categoria,
+              COUNT(DISTINCT prod.id_produto)::integer AS quantidade_produtos,
+              COUNT(DISTINCT prod.id_produtor)::integer AS quantidade_produtores,
+              COUNT(p.id_producao)::integer AS quantidade_registros_producao,
+              COALESCE(SUM(p.quantidade), 0) AS producao_total,
+              COALESCE(AVG(p.quantidade), 0) AS producao_media
+          FROM categoria c
+          LEFT JOIN produto prod
+              ON prod.id_categoria = c.id_categoria
+             AND prod.id_produtor = $1
+          LEFT JOIN producao p
+              ON p.id_produto = prod.id_produto
+             AND p.id_produtor = $1
+          GROUP BY c.id_categoria, c.nome
+      ) AS resumo_produtor
+      ORDER BY categoria;`,
+     [id_produtor]
     );
 
     return resultado.rows;
@@ -131,6 +159,7 @@ module.exports = {
     deletarProdutor,
     criarProdutor,
     buscarResumoProducao,
+    buscarResumoProducaoPorCategoria,
     listarProducoes,
     criarProducao
 };

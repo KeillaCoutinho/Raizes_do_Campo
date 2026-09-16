@@ -222,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             atualizarRelatorio(produtos);
+            carregarResumoProducaoPorCategoria();
             carregarResumoProducao();
             carregarProducoes();
 
@@ -458,6 +459,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (quantidadeTotal) {
             quantidadeTotal.textContent = `${Number(resumo.quantidade_total || 0).toFixed(2)} ${resumo.unidade_mais_utilizada || "unidades"}`;
+        }
+    }
+
+    async function carregarResumoProducaoPorCategoria() {
+        const listaCategorias = document.getElementById("relatorio-categorias-lista");
+        const elementoCategorias = document.getElementById("relatorio-categorias");
+
+        if (!listaCategorias) return;
+
+        try {
+            const resposta = await fetch(`${apiUrl}/producoes/resumo-categorias`, {
+                method: "GET",
+                credentials: "include"
+            });
+            const resumo = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(resumo.erro || "Erro ao buscar categorias.");
+            }
+
+            const totalProdutos = resumo.reduce((total, categoria) =>
+                total + Number(categoria.quantidade_produtos), 0
+            );
+
+            if (elementoCategorias) {
+                elementoCategorias.textContent = resumo.filter((item) =>
+                    Number(item.quantidade_produtos) > 0
+                ).length;
+            }
+
+            listaCategorias.innerHTML = resumo.every((item) =>
+                Number(item.quantidade_produtos) === 0
+            )
+                ? `<div class="relatorio-vazio"><span>📊</span><p>Nenhum produto cadastrado.</p></div>`
+                : resumo.map((item) => {
+                    const quantidade = Number(item.quantidade_produtos);
+                    const percentual = totalProdutos > 0
+                        ? (quantidade / totalProdutos) * 100
+                        : 0;
+
+                    return `
+                        <div class="categoria-relatorio">
+                            <div>
+                                <span>${escaparHtml(item.categoria)}</span>
+                                <strong>${quantidade}</strong>
+                            </div>
+                            <div class="categoria-barra">
+                                <span style="width: ${percentual}%"></span>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+        } catch (erro) {
+            console.error("Erro ao carregar resumo por categoria:", erro);
         }
     }
 

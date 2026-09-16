@@ -95,6 +95,24 @@ async function buscarResumoProducao(req, res) {
     }
 }
 
+async function buscarResumoProducaoPorCategoria(req, res) {
+    if (!validarSessaoProdutor(req, res)) {
+        return;
+    }
+
+    try {
+        const resumo = await produtorModel.buscarResumoProducaoPorCategoria(
+            req.session.usuarioId
+        );
+        res.json(resumo);
+    } catch (erro) {
+        console.error('ERRO AO BUSCAR RESUMO POR CATEGORIA:', erro);
+        res.status(500).json({
+            erro: 'Erro ao buscar resumo por categoria'
+        });
+    }
+}
+
 async function registrarProducao(req, res) {
     if (!validarSessaoProdutor(req, res)) {
         return;
@@ -148,6 +166,7 @@ async function listarProducoes(req, res) {
 module.exports = {
     cadastrarProdutor,
     buscarResumoProducao,
+    buscarResumoProducaoPorCategoria,
     registrarProducao,
     listarProducoes
 };
