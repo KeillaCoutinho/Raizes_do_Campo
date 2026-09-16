@@ -13,7 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const apiUrl = "http://127.0.0.1:3000";
+    const apiUrl = window.location.port === "5500"
+        ? "http://127.0.0.1:3000"
+        : window.location.origin;
 
     async function fazerLogout(e) {
         e.preventDefault();
