@@ -5,6 +5,7 @@ require('dotenv').config({
 const express = require('express');
 const pool = require('./config/database');
 const cors = require('cors');
+const path = require('path');
 
 const produtoRoutes = require('./routes/produtoRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
@@ -16,11 +17,25 @@ const session = require('express-session');
 
 const app = express();
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 app.use(express.json());
 
 app.use(cors({
-    origin: 'http://127.0.0.1:5500',
+    origin: (origem, callback) => {
+        const origensPermitidas = [
+            process.env.FRONTEND_URL || 'https://raizes-do-campo.onrender.com',
+            'http://localhost:3000',
+            'http://127.0.0.1:3000',
+            'http://localhost:5500',
+            'http://127.0.0.1:5500'
+        ].filter(Boolean);
+
+        if (!origem || origensPermitidas.includes(origem)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error('Origem não permitida pelo CORS'));
+    },
     credentials: true
 }));
 
@@ -33,15 +48,17 @@ app.use(session({
     }
 }));
 
+app.use(express.static(path.resolve(__dirname, '..')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../index.html'));
+});
+
 app.use(produtoRoutes);
 app.use(categoriaRoutes);
 app.use(contatoRoutes);
 app.use(consumidorRoutes);
 app.use(produtorRoutes);
-
-app.get('/', (req, res) => {
-    res.send('Backend do Raízes do Campo funcionando! 🌱');
-});
 
 app.get('/teste-banco', async (req, res) => {
     try {
