@@ -122,6 +122,39 @@ DB_PASSWORD=...
 
 O Render fornece `PORT` automaticamente. O banco precisa ser um PostgreSQL acessível pelo serviço e já conter as tabelas usadas pela aplicação. Se o frontend for publicado em outro domínio, adicione também `FRONTEND_URL` com a URL completa dele, por exemplo `https://seu-site.onrender.com`.
 
+## JSONB do produtor
+
+O campo `produtor.dados_extra` é utilizado como um objeto JSONB no CRUD de produtores. No cadastro, ele é opcional e, quando omitido, recebe `{}`:
+
+```json
+POST /produtores
+{
+  "nome": "Ana da Silva",
+  "email": "ana@example.com",
+  "senha": "senha-segura",
+  "dados_extra": {
+    "especialidade": "Hortaliças orgânicas",
+    "feira": "Feira Central"
+  }
+}
+```
+
+Depois do login do produtor, a leitura está disponível em `GET /perfil` ou `GET /produtores/:id` e retorna `dados_extra`. A alteração usa `PUT /produtores/:id` e preserva os demais campos quando `dados_extra` não é enviado:
+
+```json
+PUT /produtores/1
+{
+  "nome": "Ana da Silva",
+  "email": "ana@example.com",
+  "telefone": "75999999999",
+  "tipo_produtor": "agricultora familiar",
+  "dados_extra": {
+    "especialidade": "Hortaliças e frutas",
+    "certificacao": "Orgânico"
+  }
+}
+```
+
 ---
 
 ### 🌿 "Fortalecendo o campo e alimentando o Brasil."
