@@ -4,10 +4,8 @@ const produtorController = require('../controllers/produtorControllers');
 const router = express.Router();
 
 router.post('/produtores', produtorController.cadastrarProdutor);
-router.get('/produtores/:id', produtorController.buscarProdutorPorId);
-router.put('/produtores/:id', produtorController.atualizarProdutor);
-router.get('/resumo-producao', produtorController.buscarResumoProducao);
-router.post('/resumo-producao', produtorController.registrarProducao);
-router.delete('/produtores/:id', produtorController.deletarProdutor);
+router.get('/producoes/resumo', produtorController.buscarResumoProducao);
+router.get('/producoes', produtorController.listarProducoes);
+router.post('/producoes', produtorController.registrarProducao);
 
 module.exports = router;

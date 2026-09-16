@@ -13,9 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const apiUrl = ["localhost", "127.0.0.1"].includes(window.location.hostname)
-        ? "http://127.0.0.1:3000"
-        : window.location.origin;
+    const apiUrl = "http://127.0.0.1:3000";
 
     async function fazerLogout(e) {
         e.preventDefault();
@@ -91,18 +89,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 .value
                 .trim();
 
-            const imagemArquivo = document
-                .getElementById("imagem")
-                .files[0];
-
             try {
                 const itemId = document
                     .getElementById("item-id")
                     .value;
-
-                const imagem = imagemArquivo
-                    ? await lerImagemComoDataUrl(imagemArquivo)
-                    : null;
 
                 const resposta = await fetch(
                     itemId
@@ -123,8 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             nome: titulo,
                             descricao: descricao,
                             preco: Number(preco),
-                            unidade_medida: "unidade",
-                            imagem: imagem
+                            unidade_medida: "unidade"
                         })
                     }
                 );
@@ -169,16 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function lerImagemComoDataUrl(arquivo) {
-        return new Promise((resolve, reject) => {
-            const leitor = new FileReader();
-
-            leitor.addEventListener("load", () => resolve(leitor.result));
-            leitor.addEventListener("error", () => reject(leitor.error));
-            leitor.readAsDataURL(arquivo);
-        });
-    }
-
 
     // ==========================================
     // 3. CARREGAR MEUS PRODUTOS
@@ -187,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function carregarProdutos() {
         try {
             const resposta = await fetch(
-                `${apiUrl}/meus-produtos`,
+                "http://127.0.0.1:3000/meus-produtos",
                 {
                     method: "GET",
                     credentials: "include"
@@ -205,13 +184,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const produtos = await resposta.json();
 
+            const seletorProducao = document.getElementById("producao-produto");
+            if (seletorProducao) {
+                seletorProducao.innerHTML = '<option value="">Selecione um produto</option>';
+                produtos.forEach((produto) => {
+                    const opcao = document.createElement("option");
+                    opcao.value = produto.id_produto;
+                    opcao.textContent = `${produto.nome}${produto.unidade_medida ? ` (${produto.unidade_medida})` : ""}`;
+                    seletorProducao.appendChild(opcao);
+                });
+            }
+
             console.log(
                 "Meus produtos recebidos da API:",
                 produtos
             );
 
             atualizarRelatorio(produtos);
-            await carregarResumoProducao();
+            carregarResumoProducao();
+            carregarProducoes();
 
             const listaItens =
                 document.getElementById("lista-itens");
@@ -222,37 +213,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             listaItens.innerHTML = "";
 
-            const nomesCategorias = {
-                2: "Frutas",
-                3: "Verduras",
-                4: "Legumes",
-                5: "Raízes",
-                6: "Grãos",
-                7: "Temperos",
-                8: "Hortaliças",
-                9: "Derivados",
-                10: "Orgânicos",
-                11: "Artesanais"
-            };
-
             produtos.forEach((produto) => {
                 const linha =
                     document.createElement("tr");
 
                 linha.innerHTML = `
                     <td>
-                        ${produto.imagem
-                            ? `<img class="anuncio-imagem" src="${produto.imagem}" alt="Imagem de ${produto.nome}">`
-                            : "<span class=\"anuncio-sem-imagem\">Sem imagem</span>"
-                        }
-                    </td>
-
-                    <td>
                         ${produto.nome}
                     </td>
 
                     <td>
-                        ${nomesCategorias[produto.id_categoria] || "Não informada"}
+                        ${produto.id_categoria}
                     </td>
 
                     <td>
@@ -260,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </td>
 
                     <td>
-                        ${produto.descricao || "-"}
+                        ${produto.unidade_medida || "-"}
                     </td>
 
                     <td>
@@ -282,8 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 listaItens.appendChild(linha);
             });
-
-            configurarImagensDosAnuncios();
 
             document.querySelectorAll(".btn-excluir").forEach((botao) => {
                 botao.addEventListener("click", () => {
@@ -316,45 +285,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (listaItens) {
                 listaItens.innerHTML = `
                     <tr>
-                        <td colspan="6">
+                        <td colspan="5">
                             Não foi possível carregar seus produtos.
                         </td>
                     </tr>
                 `;
             }
         }
-    }
-
-    function configurarImagensDosAnuncios() {
-        const modal = document.getElementById("modal-imagem-anuncio");
-        const imagemAmpliada = document.getElementById("imagem-anuncio-ampliada");
-        const botaoFechar = document.getElementById("fechar-imagem-anuncio");
-
-        if (!modal || !imagemAmpliada || !botaoFechar) {
-            return;
-        }
-
-        const fecharModal = () => {
-            modal.classList.remove("aberto");
-            modal.setAttribute("aria-hidden", "true");
-            imagemAmpliada.src = "";
-        };
-
-        document.querySelectorAll(".anuncio-imagem").forEach((imagem) => {
-            imagem.addEventListener("click", () => {
-                imagemAmpliada.src = imagem.src;
-                imagemAmpliada.alt = imagem.alt;
-                modal.classList.add("aberto");
-                modal.setAttribute("aria-hidden", "false");
-            });
-        });
-
-        botaoFechar.onclick = fecharModal;
-        modal.onclick = (evento) => {
-            if (evento.target === modal) {
-                fecharModal();
-            }
-        };
     }
 
     function editarProduto(produto) {
@@ -402,12 +339,17 @@ document.addEventListener("DOMContentLoaded", () => {
             unidades.set(unidade, (unidades.get(unidade) || 0) + 1);
         });
 
+        const precoMedio = totalProdutos > 0
+            ? produtos.reduce((total, produto) =>
+                total + Number(produto.preco || 0), 0
+            ) / totalProdutos
+            : 0;
+
         const elementoProdutos = document.getElementById("relatorio-produtos");
         const elementoCategorias = document.getElementById("relatorio-categorias");
         const elementoPrecoMedio = document.getElementById("relatorio-preco-medio");
         const listaCategorias = document.getElementById("relatorio-categorias-lista");
         const elementoStatus = document.getElementById("relatorio-status");
-        const campoProduto = document.getElementById("produto-colhido");
 
         if (elementoProdutos) {
             elementoProdutos.textContent = totalProdutos;
@@ -418,26 +360,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (elementoPrecoMedio) {
-            elementoPrecoMedio.textContent = "R$ 0,00";
+            elementoPrecoMedio.textContent = totalProdutos > 0
+                ? `R$ ${precoMedio.toFixed(2).replace(".", ",")}`
+                : "R$ 0,00";
         }
 
         if (elementoStatus) {
             elementoStatus.textContent = "Dados atualizados";
-        }
-
-        if (campoProduto) {
-            const produtoSelecionado = campoProduto.value;
-
-            campoProduto.innerHTML = `
-                <option value="">Selecione um produto</option>
-                ${produtos.map((produto) => `
-                    <option value="${produto.nome}">${produto.nome}</option>
-                `).join("")}
-            `;
-
-            if (produtos.some((produto) => produto.nome === produtoSelecionado)) {
-                campoProduto.value = produtoSelecionado;
-            }
         }
 
         if (listaCategorias) {
@@ -482,13 +411,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function exibirResumoProducao(resumo) {
         const ultimaColheita = document.getElementById("relatorio-ultima-colheita");
+        const registros = document.getElementById("relatorio-registros");
         const producao = document.getElementById("relatorio-producao");
-        const produto = document.getElementById("relatorio-produto");
-        const peso = document.getElementById("relatorio-peso");
-        const valorMedio = document.getElementById("relatorio-preco-medio");
-        const campoData = document.getElementById("data-colheita");
-        const campoProduto = document.getElementById("produto-colhido");
-        const campoPeso = document.getElementById("peso-colhido");
+        const quantidadeTotal = document.getElementById("relatorio-quantidade-total");
 
         if (ultimaColheita) {
             ultimaColheita.textContent = resumo.ultima_colheita
@@ -496,38 +421,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 : "Não informada";
         }
 
+        if (registros) {
+            registros.textContent = resumo.total_registros ?? 0;
+        }
+
         if (producao) {
             producao.textContent = resumo.total_registros ?? 0;
         }
 
-        if (produto) {
-            produto.textContent = resumo.produto || "Não informado";
-        }
-
-        if (peso) {
-            peso.textContent = resumo.peso
-                ? `${Number(resumo.peso).toFixed(2).replace(".", ",")} kg`
-                : "Não informado";
-        }
-
-        if (valorMedio) {
-            valorMedio.textContent = `R$ ${Number(resumo.valor_medio || 0)
-                .toFixed(2)
-                .replace(".", ",")}`;
-        }
-
-        if (campoData) {
-            campoData.value = resumo.ultima_colheita
-                ? resumo.ultima_colheita.split("T")[0]
-                : "";
-        }
-
-        if (campoProduto && resumo.produto) {
-            campoProduto.value = resumo.produto;
-        }
-
-        if (campoPeso) {
-            campoPeso.value = resumo.peso || "";
+        if (quantidadeTotal) {
+            quantidadeTotal.textContent = `${Number(resumo.quantidade_total || 0).toFixed(2)} ${resumo.unidade_mais_utilizada || "unidades"}`;
         }
     }
 
@@ -537,22 +440,48 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const resposta = await fetch(`${apiUrl}/resumo-producao`, {
+            const resposta = await fetch(`${apiUrl}/producoes/resumo`, {
                 method: "GET",
                 credentials: "include"
             });
 
             if (!resposta.ok) {
-                console.error(
-                    "Erro ao carregar resumo da produção:",
-                    await resposta.text()
-                );
                 return;
             }
 
             exibirResumoProducao(await resposta.json());
         } catch (erro) {
             console.error("Erro ao carregar resumo da produção:", erro);
+        }
+    }
+
+    async function carregarProducoes() {
+        const lista = document.getElementById("lista-producoes");
+        if (!lista) return;
+
+        try {
+            const resposta = await fetch(`${apiUrl}/producoes`, {
+                method: "GET",
+                credentials: "include"
+            });
+
+            if (!resposta.ok) return;
+
+            const producoes = await resposta.json();
+            lista.innerHTML = producoes.length === 0
+                ? "<p>Nenhum registro de produção cadastrado.</p>"
+                : `
+                    <h4>Registros recentes</h4>
+                    ${producoes.slice(0, 5).map((producao) => `
+                        <div class="producao-registro">
+                            <strong>${producao.produto}</strong>
+                            <span>${Number(producao.quantidade).toFixed(2)} ${producao.unidade_medida || "unidades"}</span>
+                            <small>${producao.data_colheita ? producao.data_colheita.split("T")[0].split("-").reverse().join("/") : "Data não informada"}</small>
+                        </div>
+                    `).join("")}
+                `;
+        } catch (erro) {
+            console.error("Erro ao carregar registros de produção:", erro);
         }
     }
 
@@ -563,16 +492,17 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
 
             try {
-                const resposta = await fetch(`${apiUrl}/resumo-producao`, {
+                const resposta = await fetch(`${apiUrl}/producoes`, {
                     method: "POST",
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        data_colheita: document.getElementById("data-colheita").value,
-                        produto: document.getElementById("produto-colhido").value,
-                        peso: document.getElementById("peso-colhido").value
+                        id_produto: document.getElementById("producao-produto").value,
+                        quantidade: document.getElementById("producao-quantidade").value,
+                        data_colheita: document.getElementById("producao-data").value,
+                        observacoes: document.getElementById("producao-observacoes").value.trim()
                     })
                 });
 
@@ -585,6 +515,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 exibirResumoProducao(resultado);
                 formResumoProducao.reset();
+                await carregarResumoProducao();
+                await carregarProducoes();
                 alert("Produção registrada com sucesso!");
             } catch (erro) {
                 console.error("Erro ao salvar resumo da produção:", erro);
@@ -612,7 +544,7 @@ async function excluirProduto(id_produto) {
 
     try {
         const resposta = await fetch(
-            `${apiUrl}/produtos/${id_produto}`,
+            `http://127.0.0.1:3000/produtos/${id_produto}`,
             {
                 method: "DELETE",
                 credentials: "include"
@@ -817,7 +749,7 @@ async function excluirProduto(id_produto) {
                 try {
 
                     const resposta = await fetch(
-                        `${apiUrl}/contato`,
+                        "http://localhost:3000/contato",
                         {
                             method: "POST",
 
@@ -1039,7 +971,7 @@ async function excluirProduto(id_produto) {
                     // Envia os dados para o backend
                     const resposta =
                         await fetch(
-                            `${apiUrl}/login`,
+                            "http://127.0.0.1:3000/login",
                             {
                                 method: "POST",
 
@@ -1188,8 +1120,8 @@ async function excluirProduto(id_produto) {
                     // Define a rota conforme o tipo
                     const urlCadastro =
                         tipoUsuario === "produtor"
-                            ? `${apiUrl}/produtores`
-                            : `${apiUrl}/consumidores`;
+                            ? "http://localhost:3000/produtores"
+                            : "http://localhost:3000/consumidores";
 
 
                     // Envia para o backend
@@ -1269,69 +1201,52 @@ async function excluirProduto(id_produto) {
     const userEmail =
         document.getElementById("user-email");
 
+    const userPhone =
+        document.getElementById("user-phone");
+
+    const perfilVisualizacao =
+        document.getElementById("perfil-visualizacao");
+
+    const editarPerfil =
+        document.getElementById("editar-perfil");
+
+    const excluirPerfil =
+        document.getElementById("excluir-perfil");
+
+    const formPerfil =
+        document.getElementById("form-perfil");
+
+    const perfilNome =
+        document.getElementById("perfil-nome");
+
+    const perfilEmail =
+        document.getElementById("perfil-email");
+
+    const perfilTelefone =
+        document.getElementById("perfil-telefone");
+
+    const perfilStatus =
+        document.getElementById("perfil-status");
+
+    const cancelarPerfil =
+        document.getElementById("cancelar-perfil");
+
+    const profileType =
+        document.getElementById("profile-type");
+
+    let dadosPerfil = null;
+
     const areaProdutor =
         document.getElementById("area-produtor");
 
     const tituloPainel =
         document.getElementById("titulo-painel");
 
-    const botaoExcluirConta =
-        document.getElementById("btn-excluir-conta");
 
-    async function excluirMinhaConta() {
-        const confirmar = confirm(
-            "Tem certeza que deseja excluir sua conta? Essa ação não pode ser desfeita."
-        );
-
-        if (!confirmar) {
-            return;
-        }
-
-        try {
-            const idUsuario = window.__perfilUsuarioId;
-            const tipoUsuario = window.__perfilTipoUsuario;
-
-            if (!idUsuario || !tipoUsuario) {
-                alert("Não foi possível identificar o usuário logado.");
-                return;
-            }
-
-            const rota = tipoUsuario === "produtor"
-                ? `${apiUrl}/produtores/${idUsuario}`
-                : `${apiUrl}/consumidores/${idUsuario}`;
-
-            const resposta = await fetch(rota, {
-                method: "DELETE",
-                credentials: "include"
-            });
-
-            const resultado = await resposta.json().catch(() => ({}));
-
-            if (!resposta.ok) {
-                throw new Error(resultado.erro || "Erro ao excluir conta.");
-            }
-
-            await fetch(`${apiUrl}/logout`, {
-                method: "POST",
-                credentials: "include"
-            }).catch(() => {});
-
-            alert("Sua conta foi excluída com sucesso.");
-            window.location.href = "login.html";
-        } catch (erro) {
-            console.error("Erro ao excluir conta:", erro);
-            alert(erro.message || "Não foi possível excluir a conta.");
-        }
-    }
-
-    if (botaoExcluirConta) {
-        botaoExcluirConta.addEventListener("click", excluirMinhaConta);
-    }
-
-    if (userName && userEmail) {
+    if (formPerfil && userName && userEmail) {
 
         fetch(
-            `${apiUrl}/perfil`,
+            "http://127.0.0.1:3000/perfil",
             {
                 method: "GET",
                 credentials: "include"
@@ -1351,8 +1266,6 @@ async function excluirProduto(id_produto) {
                     );
                 }
 
-                window.__perfilUsuarioId = resultado.id_consumidor ?? resultado.id_produtor;
-                window.__perfilTipoUsuario = resultado.tipoUsuario;
 
                 // Mostra os dados do usuário
                 userName.textContent =
@@ -1360,6 +1273,21 @@ async function excluirProduto(id_produto) {
 
                 userEmail.textContent =
                     resultado.email;
+
+                if (userPhone) {
+                    userPhone.textContent = resultado.telefone || "Não informado";
+                }
+
+                dadosPerfil = resultado;
+
+                if (perfilNome) perfilNome.value = resultado.nome || "";
+                if (perfilEmail) perfilEmail.value = resultado.email || "";
+                if (perfilTelefone) perfilTelefone.value = resultado.telefone || "";
+                if (profileType) {
+                    profileType.textContent = resultado.tipoUsuario === "produtor"
+                        ? "Produtor"
+                        : "Consumidor";
+                }
 
 
                 // ==================================
@@ -1423,10 +1351,6 @@ async function excluirProduto(id_produto) {
                 userEmail.textContent =
                     "Não foi possível carregar";
 
-                if (botaoExcluirConta) {
-                    botaoExcluirConta.disabled = true;
-                    botaoExcluirConta.title = "Perfil indisponível";
-                }
 
                 // Esconde área de produtor
                 if (areaProdutor) {
@@ -1435,6 +1359,109 @@ async function excluirProduto(id_produto) {
                         "none";
                 }
             });
+    }
+
+    if (formPerfil) {
+        editarPerfil.addEventListener("click", () => {
+            perfilVisualizacao.hidden = true;
+            formPerfil.hidden = false;
+            editarPerfil.hidden = true;
+            excluirPerfil.hidden = true;
+            cancelarPerfil.hidden = false;
+            perfilNome.focus();
+        });
+
+        formPerfil.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            perfilStatus.textContent = "Salvando...";
+            perfilStatus.className = "profile-status";
+
+            try {
+                const resposta = await fetch(`${apiUrl}/perfil`, {
+                    method: "PUT",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        nome: perfilNome.value.trim(),
+                        email: perfilEmail.value.trim(),
+                        telefone: perfilTelefone.value.trim()
+                    })
+                });
+
+                const resultado = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(resultado.erro || "Não foi possível salvar o perfil.");
+                }
+
+                dadosPerfil = resultado;
+                userName.textContent = resultado.nome;
+                userEmail.textContent = resultado.email;
+                if (userPhone) userPhone.textContent = resultado.telefone || "Não informado";
+                perfilStatus.textContent = resultado.mensagem;
+                perfilStatus.classList.add("success");
+                formPerfil.hidden = true;
+                perfilVisualizacao.hidden = false;
+                editarPerfil.hidden = false;
+                excluirPerfil.hidden = false;
+            } catch (erro) {
+                console.error("Erro ao atualizar perfil:", erro);
+                perfilStatus.textContent = erro.message;
+                perfilStatus.classList.add("error");
+            }
+        });
+
+        cancelarPerfil.addEventListener("click", () => {
+            if (!dadosPerfil) return;
+            perfilNome.value = dadosPerfil.nome || "";
+            perfilEmail.value = dadosPerfil.email || "";
+            perfilTelefone.value = dadosPerfil.telefone || "";
+            perfilStatus.textContent = "Alterações descartadas.";
+            perfilStatus.className = "profile-status";
+            formPerfil.hidden = true;
+            perfilVisualizacao.hidden = false;
+            editarPerfil.hidden = false;
+            excluirPerfil.hidden = false;
+        });
+
+        [perfilNome, perfilEmail, perfilTelefone].forEach((campo) => {
+            campo.addEventListener("input", () => {
+                cancelarPerfil.hidden = false;
+            });
+        });
+    }
+
+    if (excluirPerfil) {
+        excluirPerfil.addEventListener("click", async () => {
+            const confirmou = window.confirm(
+                "Excluir seu perfil apagará sua conta e seus dados. Deseja continuar?"
+            );
+
+            if (!confirmou) return;
+
+            excluirPerfil.disabled = true;
+
+            try {
+                const resposta = await fetch(`${apiUrl}/perfil`, {
+                    method: "DELETE",
+                    credentials: "include"
+                });
+                const resultado = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(resultado.erro || "Não foi possível excluir o perfil.");
+                }
+
+                alert(resultado.mensagem);
+                window.location.href = "login.html";
+            } catch (erro) {
+                console.error("Erro ao excluir perfil:", erro);
+                alert(erro.message);
+                excluirPerfil.disabled = false;
+            }
+        });
     }
 
 
@@ -1959,16 +1986,6 @@ async function excluirProduto(id_produto) {
             ".filtro"
         );
 
-    const produtoSearch = document.querySelector(
-        ".produto-search"
-    );
-
-    if (produtoSearch && searchInput) {
-        produtoSearch.addEventListener("click", () => {
-            searchInput.focus();
-        });
-    }
-
 
     if (!productGrid) {
         return;
@@ -1976,14 +1993,6 @@ async function excluirProduto(id_produto) {
 
 
     let categoriaAtual = "todos";
-
-    function normalizarTexto(valor) {
-        return String(valor || "")
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase()
-            .trim();
-    }
 
 
     function atualizarProdutos() {
@@ -1996,23 +2005,31 @@ async function excluirProduto(id_produto) {
             );
 
 
-        const termo = normalizarTexto(searchInput?.value);
+        const termo =
+            searchInput
+                ? searchInput.value
+                    .toLowerCase()
+                    .trim()
+                : "";
 
 
         cards.forEach(
             (card) => {
 
-                const nome = normalizarTexto(
-                    card.querySelector("h3")?.textContent
-                );
+                const nome =
+                    card.dataset.nome
+                        ? card.dataset.nome.toLowerCase()
+                        : "";
 
 
-                const categoria = normalizarTexto(
+                const categoria =
                     card.dataset.categoria
-                );
+                        ? card.dataset.categoria.toLowerCase()
+                        : "";
 
 
-                const texto = normalizarTexto(card.textContent);
+                const texto =
+                    card.textContent.toLowerCase();
 
 
                 const correspondeBusca =
@@ -2148,9 +2165,10 @@ async function excluirProduto(id_produto) {
                 );
 
 
-        const contador = document.querySelector(
-            ".catalogo-resultados strong"
-        );
+        const contador =
+            document.querySelector(
+                ".produtos-count strong"
+            );
 
 
         if (contador) {

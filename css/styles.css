@@ -856,30 +856,6 @@ footer::before {
   cursor: pointer;
   border-radius: 4px;
 }
-
-.perfil-acoes {
-  margin-top: 18px;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.btn-danger {
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #d93b3b, #b32828);
-  color: #fff;
-  padding: 12px 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 8px 24px rgba(185, 47, 47, 0.2);
-}
-
-.btn-danger:hover,
-.btn-danger:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(185, 47, 47, 0.28);
-}
 /* ==========================================================================
    Autenticação (Login e Cadastro) & Painel do Usuário (Dashboard / CRUD)
    ========================================================================== */
@@ -1014,6 +990,126 @@ select:focus {
     margin-bottom: 20px;
 }
 
+.profile-card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.card-kicker {
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.profile-card-description {
+    margin: -10px 0 0;
+    color: var(--muted);
+}
+
+.profile-badge {
+    padding: 7px 12px;
+    border: 1px solid rgba(156, 216, 116, 0.28);
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.profile-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 26px 0 22px;
+}
+
+.profile-summary > div {
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.profile-summary span,
+.profile-summary strong {
+    display: block;
+}
+
+.profile-summary span {
+    margin-bottom: 5px;
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.profile-summary strong {
+    overflow-wrap: anywhere;
+    color: var(--text);
+}
+
+.profile-actions,
+.profile-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-form {
+    margin-top: 24px;
+}
+
+.profile-form[hidden],
+.profile-actions [hidden],
+.profile-form-actions [hidden] {
+    display: none;
+}
+
+.profile-status {
+    min-height: 24px;
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.profile-status.success {
+    color: var(--accent);
+}
+
+.profile-status.error {
+    color: #ff9b9b;
+}
+
+.btn-secondary,
+.btn-danger {
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-secondary {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+}
+
+.btn-danger {
+    border: 1px solid rgba(255, 125, 125, 0.35);
+    background: rgba(201, 74, 74, 0.16);
+    color: #ffb0b0;
+}
+
+.btn-secondary:hover,
+.btn-danger:hover {
+    opacity: 0.86;
+    transform: translateY(-1px);
+}
+
 /* Tabela CRUD Adaptada ao Layout Escuro */
 .tabela-wrapper {
     overflow-x: auto;
@@ -1043,58 +1139,6 @@ select:focus {
 .tabela-crud td img {
     border-radius: 8px;
     object-fit: cover;
-}
-
-.anuncio-imagem {
-    display: block;
-    width: 72px;
-    height: 56px;
-    border-radius: 8px;
-    object-fit: cover;
-    cursor: zoom-in;
-}
-
-.anuncio-sem-imagem {
-    color: #777;
-    font-size: 0.8rem;
-}
-
-.modal-imagem-anuncio {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 32px;
-    background: rgba(0, 0, 0, 0.82);
-}
-
-.modal-imagem-anuncio.aberto {
-    display: flex;
-}
-
-.modal-imagem-anuncio img {
-    max-width: min(900px, 90vw);
-    max-height: 85vh;
-    border-radius: 12px;
-    object-fit: contain;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-}
-
-.modal-imagem-fechar {
-    position: absolute;
-    top: 20px;
-    right: 24px;
-    width: 42px;
-    height: 42px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: #f2f8e6;
-    color: #102109;
-    font-size: 1.8rem;
-    line-height: 1;
 }
 
 /* Botões de Ação na Tabela */
@@ -1379,6 +1423,32 @@ select:focus {
     padding: 12px 18px;
 }
 
+.lista-producoes {
+    margin-top: 24px;
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+}
+
+.lista-producoes h4 {
+    margin: 0 0 12px;
+    color: var(--text);
+}
+
+.producao-registro {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.producao-registro span,
+.producao-registro small,
+.lista-producoes > p {
+    color: var(--muted);
+}
+
 
 /* Responsividade */
 
@@ -1541,10 +1611,7 @@ select:focus {
 }
 
 .produto-search {
-    flex: 1 1 0;
-    width: 0;
-    min-width: 0;
-    min-height: 54px;
+    flex: 1;
 
     display: flex;
     align-items: center;
@@ -1555,21 +1622,14 @@ select:focus {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--border);
     border-radius: 14px;
-    cursor: text;
 }
 
 .produto-search span {
-    flex-shrink: 0;
-    padding: 0;
-    border: none;
-    background: transparent;
     font-size: 1rem;
 }
 
 .produto-search input {
-    flex: 1 1 auto;
     width: 100%;
-    min-width: 0;
 
     padding: 14px 0;
 
@@ -1579,25 +1639,14 @@ select:focus {
 
     color: var(--text);
     font: inherit;
-    font-size: 1rem;
 }
 
 .produto-search input::placeholder {
     color: var(--muted);
 }
 
-.produto-search input:focus,
-.produto-search input:focus-visible {
-    border: none;
-    outline: none;
-    box-shadow: none;
-    transform: none;
-}
-
 .produto-sort {
-    flex: 0 0 190px;
-    width: 190px;
-    min-width: 0;
+    min-width: 190px;
 
     padding: 0 16px;
 
@@ -2024,13 +2073,7 @@ select:focus {
         flex-direction: column;
     }
 
-    .produto-search {
-        width: 100%;
-    }
-
     .produto-sort {
-        width: 100%;
-        flex-basis: auto;
         min-height: 48px;
     }
 

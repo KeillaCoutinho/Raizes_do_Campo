@@ -2,7 +2,6 @@ require('dotenv').config({
     path: require('path').resolve(__dirname, '../.env')
 });
 
-const path = require('path');
 const express = require('express');
 const pool = require('./config/database');
 const cors = require('cors');
@@ -17,28 +16,20 @@ const session = require('express-session');
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-const frontendUrl = process.env.FRONTEND_URL;
-
-app.use(express.json({ limit: '10mb' }));
+const PORT = 3000;
+app.use(express.json());
 
 app.use(cors({
-    origin: frontendUrl || true,
+    origin: 'http://127.0.0.1:5500',
     credentials: true
 }));
 
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1);
-}
-
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'raizes-do-campo-secret-local',
+    secret: 'raizes-do-campo-secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1000 * 60 * 60,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+        maxAge: 1000 * 60 * 60 // a sessão irá durar 1 hora
     }
 }));
 
@@ -48,10 +39,8 @@ app.use(contatoRoutes);
 app.use(consumidorRoutes);
 app.use(produtorRoutes);
 
-app.use(express.static(path.resolve(__dirname, '..')));
-
 app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '..', 'index.html'));
+    res.send('Backend do Raízes do Campo funcionando! 🌱');
 });
 
 app.get('/teste-banco', async (req, res) => {
@@ -73,5 +62,5 @@ app.get('/teste-banco', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
