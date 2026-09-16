@@ -973,7 +973,7 @@ async function excluirProduto(id_produto) {
                     // Envia os dados para o backend
                     const resposta =
                         await fetch(
-                            "http://127.0.0.1:3000/login",
+                            `${apiUrl}/login`,
                             {
                                 method: "POST",
 
