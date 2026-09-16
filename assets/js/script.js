@@ -536,8 +536,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modal.hidden = false;
         document.body.classList.add("modal-aberto");
-        window.scrollTo({
-            top: 0,
+        window.scrollBy({
+            top: -180,
             behavior: "smooth"
         });
         lista.innerHTML = "";
