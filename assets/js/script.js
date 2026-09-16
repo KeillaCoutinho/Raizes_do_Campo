@@ -184,6 +184,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const produtos = await resposta.json();
 
+            const seletorProducao = document.getElementById("producao-produto");
+            if (seletorProducao) {
+                seletorProducao.innerHTML = '<option value="">Selecione um produto</option>';
+                produtos.forEach((produto) => {
+                    const opcao = document.createElement("option");
+                    opcao.value = produto.id_produto;
+                    opcao.textContent = `${produto.nome}${produto.unidade_medida ? ` (${produto.unidade_medida})` : ""}`;
+                    seletorProducao.appendChild(opcao);
+                });
+            }
+
             console.log(
                 "Meus produtos recebidos da API:",
                 produtos
@@ -191,6 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             atualizarRelatorio(produtos);
             carregarResumoProducao();
+            carregarProducoes();
 
             const listaItens =
                 document.getElementById("lista-itens");
@@ -401,10 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const ultimaColheita = document.getElementById("relatorio-ultima-colheita");
         const registros = document.getElementById("relatorio-registros");
         const producao = document.getElementById("relatorio-producao");
-        const unidade = document.getElementById("relatorio-unidade");
-        const campoData = document.getElementById("ultima-colheita");
-        const campoRegistros = document.getElementById("total-registros");
-        const campoUnidade = document.getElementById("unidade-mais-utilizada");
+        const quantidadeTotal = document.getElementById("relatorio-quantidade-total");
 
         if (ultimaColheita) {
             ultimaColheita.textContent = resumo.ultima_colheita
@@ -420,22 +429,8 @@ document.addEventListener("DOMContentLoaded", () => {
             producao.textContent = resumo.total_registros ?? 0;
         }
 
-        if (unidade) {
-            unidade.textContent = resumo.unidade_mais_utilizada || "Não informada";
-        }
-
-        if (campoData) {
-            campoData.value = resumo.ultima_colheita
-                ? resumo.ultima_colheita.split("T")[0]
-                : "";
-        }
-
-        if (campoRegistros) {
-            campoRegistros.value = resumo.total_registros ?? 0;
-        }
-
-        if (campoUnidade) {
-            campoUnidade.value = resumo.unidade_mais_utilizada || "";
+        if (quantidadeTotal) {
+            quantidadeTotal.textContent = `${Number(resumo.quantidade_total || 0).toFixed(2)} ${resumo.unidade_mais_utilizada || "unidades"}`;
         }
     }
 
@@ -445,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const resposta = await fetch(`${apiUrl}/resumo-producao`, {
+            const resposta = await fetch(`${apiUrl}/producoes/resumo`, {
                 method: "GET",
                 credentials: "include"
             });
@@ -460,6 +455,36 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    async function carregarProducoes() {
+        const lista = document.getElementById("lista-producoes");
+        if (!lista) return;
+
+        try {
+            const resposta = await fetch(`${apiUrl}/producoes`, {
+                method: "GET",
+                credentials: "include"
+            });
+
+            if (!resposta.ok) return;
+
+            const producoes = await resposta.json();
+            lista.innerHTML = producoes.length === 0
+                ? "<p>Nenhum registro de produção cadastrado.</p>"
+                : `
+                    <h4>Registros recentes</h4>
+                    ${producoes.slice(0, 5).map((producao) => `
+                        <div class="producao-registro">
+                            <strong>${producao.produto}</strong>
+                            <span>${Number(producao.quantidade).toFixed(2)} ${producao.unidade_medida || "unidades"}</span>
+                            <small>${producao.data_colheita ? producao.data_colheita.split("T")[0].split("-").reverse().join("/") : "Data não informada"}</small>
+                        </div>
+                    `).join("")}
+                `;
+        } catch (erro) {
+            console.error("Erro ao carregar registros de produção:", erro);
+        }
+    }
+
     const formResumoProducao = document.getElementById("form-resumo-producao");
 
     if (formResumoProducao) {
@@ -467,19 +492,17 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
 
             try {
-                const resposta = await fetch(`${apiUrl}/resumo-producao`, {
-                    method: "PUT",
+                const resposta = await fetch(`${apiUrl}/producoes`, {
+                    method: "POST",
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        ultima_colheita: document.getElementById("ultima-colheita").value,
-                        total_registros: document.getElementById("total-registros").value,
-                        unidade_mais_utilizada: document
-                            .getElementById("unidade-mais-utilizada")
-                            .value
-                            .trim()
+                        id_produto: document.getElementById("producao-produto").value,
+                        quantidade: document.getElementById("producao-quantidade").value,
+                        data_colheita: document.getElementById("producao-data").value,
+                        observacoes: document.getElementById("producao-observacoes").value.trim()
                     })
                 });
 
@@ -491,7 +514,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 exibirResumoProducao(resultado);
-                alert("Resumo da produção atualizado com sucesso!");
+                formResumoProducao.reset();
+                await carregarResumoProducao();
+                await carregarProducoes();
+                alert("Produção registrada com sucesso!");
             } catch (erro) {
                 console.error("Erro ao salvar resumo da produção:", erro);
                 alert("Não foi possível conectar com o servidor.");
@@ -1175,6 +1201,41 @@ async function excluirProduto(id_produto) {
     const userEmail =
         document.getElementById("user-email");
 
+    const userPhone =
+        document.getElementById("user-phone");
+
+    const perfilVisualizacao =
+        document.getElementById("perfil-visualizacao");
+
+    const editarPerfil =
+        document.getElementById("editar-perfil");
+
+    const excluirPerfil =
+        document.getElementById("excluir-perfil");
+
+    const formPerfil =
+        document.getElementById("form-perfil");
+
+    const perfilNome =
+        document.getElementById("perfil-nome");
+
+    const perfilEmail =
+        document.getElementById("perfil-email");
+
+    const perfilTelefone =
+        document.getElementById("perfil-telefone");
+
+    const perfilStatus =
+        document.getElementById("perfil-status");
+
+    const cancelarPerfil =
+        document.getElementById("cancelar-perfil");
+
+    const profileType =
+        document.getElementById("profile-type");
+
+    let dadosPerfil = null;
+
     const areaProdutor =
         document.getElementById("area-produtor");
 
@@ -1182,7 +1243,7 @@ async function excluirProduto(id_produto) {
         document.getElementById("titulo-painel");
 
 
-    if (userName && userEmail) {
+    if (formPerfil && userName && userEmail) {
 
         fetch(
             "http://127.0.0.1:3000/perfil",
@@ -1212,6 +1273,21 @@ async function excluirProduto(id_produto) {
 
                 userEmail.textContent =
                     resultado.email;
+
+                if (userPhone) {
+                    userPhone.textContent = resultado.telefone || "Não informado";
+                }
+
+                dadosPerfil = resultado;
+
+                if (perfilNome) perfilNome.value = resultado.nome || "";
+                if (perfilEmail) perfilEmail.value = resultado.email || "";
+                if (perfilTelefone) perfilTelefone.value = resultado.telefone || "";
+                if (profileType) {
+                    profileType.textContent = resultado.tipoUsuario === "produtor"
+                        ? "Produtor"
+                        : "Consumidor";
+                }
 
 
                 // ==================================
@@ -1283,6 +1359,109 @@ async function excluirProduto(id_produto) {
                         "none";
                 }
             });
+    }
+
+    if (formPerfil) {
+        editarPerfil.addEventListener("click", () => {
+            perfilVisualizacao.hidden = true;
+            formPerfil.hidden = false;
+            editarPerfil.hidden = true;
+            excluirPerfil.hidden = true;
+            cancelarPerfil.hidden = false;
+            perfilNome.focus();
+        });
+
+        formPerfil.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            perfilStatus.textContent = "Salvando...";
+            perfilStatus.className = "profile-status";
+
+            try {
+                const resposta = await fetch(`${apiUrl}/perfil`, {
+                    method: "PUT",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        nome: perfilNome.value.trim(),
+                        email: perfilEmail.value.trim(),
+                        telefone: perfilTelefone.value.trim()
+                    })
+                });
+
+                const resultado = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(resultado.erro || "Não foi possível salvar o perfil.");
+                }
+
+                dadosPerfil = resultado;
+                userName.textContent = resultado.nome;
+                userEmail.textContent = resultado.email;
+                if (userPhone) userPhone.textContent = resultado.telefone || "Não informado";
+                perfilStatus.textContent = resultado.mensagem;
+                perfilStatus.classList.add("success");
+                formPerfil.hidden = true;
+                perfilVisualizacao.hidden = false;
+                editarPerfil.hidden = false;
+                excluirPerfil.hidden = false;
+            } catch (erro) {
+                console.error("Erro ao atualizar perfil:", erro);
+                perfilStatus.textContent = erro.message;
+                perfilStatus.classList.add("error");
+            }
+        });
+
+        cancelarPerfil.addEventListener("click", () => {
+            if (!dadosPerfil) return;
+            perfilNome.value = dadosPerfil.nome || "";
+            perfilEmail.value = dadosPerfil.email || "";
+            perfilTelefone.value = dadosPerfil.telefone || "";
+            perfilStatus.textContent = "Alterações descartadas.";
+            perfilStatus.className = "profile-status";
+            formPerfil.hidden = true;
+            perfilVisualizacao.hidden = false;
+            editarPerfil.hidden = false;
+            excluirPerfil.hidden = false;
+        });
+
+        [perfilNome, perfilEmail, perfilTelefone].forEach((campo) => {
+            campo.addEventListener("input", () => {
+                cancelarPerfil.hidden = false;
+            });
+        });
+    }
+
+    if (excluirPerfil) {
+        excluirPerfil.addEventListener("click", async () => {
+            const confirmou = window.confirm(
+                "Excluir seu perfil apagará sua conta e seus dados. Deseja continuar?"
+            );
+
+            if (!confirmou) return;
+
+            excluirPerfil.disabled = true;
+
+            try {
+                const resposta = await fetch(`${apiUrl}/perfil`, {
+                    method: "DELETE",
+                    credentials: "include"
+                });
+                const resultado = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(resultado.erro || "Não foi possível excluir o perfil.");
+                }
+
+                alert(resultado.mensagem);
+                window.location.href = "login.html";
+            } catch (erro) {
+                console.error("Erro ao excluir perfil:", erro);
+                alert(erro.message);
+                excluirPerfil.disabled = false;
+            }
+        });
     }
 
 

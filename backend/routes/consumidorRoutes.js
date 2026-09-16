@@ -24,6 +24,8 @@ router.get('/consumidores', consumidorController.listarConsumidores);
 router.put('/consumidores/:id', consumidorController.atualizarConsumidor);
 router.delete('/consumidores/:id', consumidorController.deletarConsumidor);
 router.get('/perfil', consumidorController.buscarPerfil);
+router.put('/perfil', consumidorController.atualizarPerfil);
+router.delete('/perfil', consumidorController.deletarPerfil);
 
 router.get('/sessao', (req, res) => {
     if (!req.session.usuarioId) {

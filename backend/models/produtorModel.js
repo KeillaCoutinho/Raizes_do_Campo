@@ -10,50 +10,52 @@ async function buscarProdutorPorEmail(email) {
     return resultado.rows[0];
 }
 
-async function garantirTabelaResumoProducao() {
-    await pool.query(`
-        CREATE TABLE IF NOT EXISTS resumo_producao (
-            id_produtor INTEGER PRIMARY KEY REFERENCES produtor(id_produtor) ON DELETE CASCADE,
-            ultima_colheita DATE,
-            total_registros INTEGER NOT NULL DEFAULT 0,
-            unidade_mais_utilizada VARCHAR(100),
-            atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-    `);
-}
-
 async function buscarResumoProducao(id_produtor) {
-    await garantirTabelaResumoProducao();
-
     const resultado = await pool.query(
-        `SELECT ultima_colheita, total_registros, unidade_mais_utilizada, atualizado_em
-         FROM resumo_producao
-         WHERE id_produtor = $1;`,
+        `SELECT MAX(p.data_colheita) AS ultima_colheita,
+                COUNT(p.id_producao)::integer AS total_registros,
+                COALESCE(SUM(p.quantidade), 0) AS quantidade_total,
+                MODE() WITHIN GROUP (ORDER BY prod.unidade_medida) AS unidade_mais_utilizada
+         FROM producao p
+         JOIN produto prod ON prod.id_produto = p.id_produto
+         WHERE p.id_produtor = $1;`,
         [id_produtor]
     );
 
-    return resultado.rows[0] || null;
+    return resultado.rows[0];
 }
 
-async function salvarResumoProducao(
-    id_produtor,
-    ultima_colheita,
-    total_registros,
-    unidade_mais_utilizada
-) {
-    await garantirTabelaResumoProducao();
-
+async function listarProducoes(id_produtor) {
     const resultado = await pool.query(
-        `INSERT INTO resumo_producao
-            (id_produtor, ultima_colheita, total_registros, unidade_mais_utilizada, atualizado_em)
-         VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
-         ON CONFLICT (id_produtor) DO UPDATE SET
-            ultima_colheita = EXCLUDED.ultima_colheita,
-            total_registros = EXCLUDED.total_registros,
-            unidade_mais_utilizada = EXCLUDED.unidade_mais_utilizada,
-            atualizado_em = CURRENT_TIMESTAMP
-         RETURNING ultima_colheita, total_registros, unidade_mais_utilizada, atualizado_em;`,
-        [id_produtor, ultima_colheita || null, total_registros, unidade_mais_utilizada || null]
+        `SELECT p.id_producao, p.id_produto, prod.nome AS produto,
+                prod.unidade_medida, p.quantidade, p.data_colheita,
+                p.observacoes
+         FROM producao p
+         JOIN produto prod ON prod.id_produto = p.id_produto
+         WHERE p.id_produtor = $1
+         ORDER BY p.data_colheita DESC NULLS LAST, p.id_producao DESC;`,
+        [id_produtor]
+    );
+
+    return resultado.rows;
+}
+
+async function criarProducao(
+    id_produtor,
+    id_produto,
+    quantidade,
+    data_colheita,
+    observacoes
+) {
+    const resultado = await pool.query(
+        `INSERT INTO producao
+            (id_produto, id_produtor, quantidade, data_colheita, observacoes)
+         SELECT $1, $2, $3, $4, $5
+         WHERE EXISTS (
+            SELECT 1 FROM produto WHERE id_produto = $1 AND id_produtor = $2
+         )
+         RETURNING *;`,
+        [id_produto, id_produtor, quantidade, data_colheita || null, observacoes || null]
     );
 
     return resultado.rows[0];
@@ -64,6 +66,31 @@ async function buscarProdutorPorId(id_produtor) {
         `SELECT id_produtor, id_localizacao, nome, email, telefone, tipo_produtor
          FROM produtor
          WHERE id_produtor = $1;`,
+        [id_produtor]
+    );
+
+    return resultado.rows[0];
+}
+
+async function atualizarProdutor(id_produtor, nome, email, telefone) {
+    const resultado = await pool.query(
+        `UPDATE produtor
+         SET nome = $1,
+             email = $2,
+             telefone = $3
+         WHERE id_produtor = $4
+         RETURNING id_produtor, id_localizacao, nome, email, telefone, tipo_produtor;`,
+        [nome, email, telefone, id_produtor]
+    );
+
+    return resultado.rows[0];
+}
+
+async function deletarProdutor(id_produtor) {
+    const resultado = await pool.query(
+        `DELETE FROM produtor
+         WHERE id_produtor = $1
+         RETURNING id_produtor;`,
         [id_produtor]
     );
 
@@ -100,7 +127,10 @@ async function criarProdutor(
 module.exports = {
     buscarProdutorPorEmail,
     buscarProdutorPorId,
+    atualizarProdutor,
+    deletarProdutor,
     criarProdutor,
     buscarResumoProducao,
-    salvarResumoProducao
+    listarProducoes,
+    criarProducao
 };

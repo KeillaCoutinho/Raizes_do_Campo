@@ -101,25 +101,59 @@
 
         <section class="card-dashboard">
 
-            <h2>
-                Meus Dados
-            </h2>
+            <div class="profile-card-heading">
+                <div>
+                    <span class="card-kicker">Conta</span>
+                    <h2>Meus Dados</h2>
+                    <p class="profile-card-description">
+                        Mantenha suas informações de contato sempre atualizadas.
+                    </p>
+                </div>
+                <span class="profile-badge" id="profile-type">Carregando...</span>
+            </div>
 
-            <p>
-                <strong>Nome:</strong>
+            <div id="perfil-visualizacao" class="profile-summary">
+                <div>
+                    <span>Nome completo</span>
+                    <strong id="user-name">Carregando...</strong>
+                </div>
+                <div>
+                    <span>E-mail</span>
+                    <strong id="user-email">Carregando...</strong>
+                </div>
+                <div>
+                    <span>Telefone</span>
+                    <strong id="user-phone">Não informado</strong>
+                </div>
+            </div>
 
-                <span id="user-name">
-                    Carregando...
-                </span>
-            </p>
+            <div class="profile-actions">
+                <button type="button" id="editar-perfil" class="btn-primary">Editar perfil</button>
+                <button type="button" id="excluir-perfil" class="btn-danger">Excluir perfil</button>
+            </div>
 
-            <p>
-                <strong>E-mail:</strong>
+            <form id="form-perfil" class="profile-form" hidden>
+                <div class="input-group">
+                    <label for="perfil-nome">Nome completo</label>
+                    <input type="text" id="perfil-nome" required maxlength="120" autocomplete="name">
+                </div>
 
-                <span id="user-email">
-                    Carregando...
-                </span>
-            </p>
+                <div class="input-group">
+                    <label for="perfil-email">E-mail</label>
+                    <input type="email" id="perfil-email" required maxlength="160" autocomplete="email">
+                </div>
+
+                <div class="input-group">
+                    <label for="perfil-telefone">Telefone</label>
+                    <input type="tel" id="perfil-telefone" maxlength="30" autocomplete="tel" placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="profile-form-actions">
+                    <button type="button" id="cancelar-perfil" class="btn-secondary" hidden>Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar alterações</button>
+                </div>
+                <p id="perfil-status" class="profile-status" role="status" aria-live="polite"></p>
+            </form>
 
         </section>
 
@@ -594,9 +628,7 @@
 
                             <div>
 
-                                <span>
-                                    Última colheita
-                                </span>
+                                <span>Última colheita</span>
 
                                 <strong id="relatorio-ultima-colheita">
                                     —
@@ -607,9 +639,7 @@
 
                             <div>
 
-                                <span>
-                                    Total de registros
-                                </span>
+                                <span>Registros</span>
 
                                 <strong id="relatorio-registros">
                                     —
@@ -620,11 +650,9 @@
 
                             <div>
 
-                                <span>
-                                    Unidade mais utilizada
-                                </span>
+                                <span>Quantidade total</span>
 
-                                <strong id="relatorio-unidade">
+                                <strong id="relatorio-quantidade-total">
                                     —
                                 </strong>
 
@@ -636,48 +664,34 @@
                         <form id="form-resumo-producao" class="form-resumo-producao">
 
                             <div class="input-group">
-                                <label for="ultima-colheita">
-                                    Última colheita
-                                </label>
-
-                                <input
-                                    type="date"
-                                    id="ultima-colheita"
-                                >
+                                <label for="producao-produto">Produto</label>
+                                <select id="producao-produto" required>
+                                    <option value="">Selecione um produto</option>
+                                </select>
                             </div>
 
                             <div class="input-group">
-                                <label for="total-registros">
-                                    Total de registros
-                                </label>
-
-                                <input
-                                    type="number"
-                                    id="total-registros"
-                                    min="0"
-                                    step="1"
-                                    required
-                                >
+                                <label for="producao-quantidade">Quantidade</label>
+                                <input type="number" id="producao-quantidade" min="0.01" step="0.01" required>
                             </div>
 
                             <div class="input-group">
-                                <label for="unidade-mais-utilizada">
-                                    Unidade mais utilizada
-                                </label>
+                                <label for="producao-data">Data da colheita</label>
+                                <input type="date" id="producao-data">
+                            </div>
 
-                                <input
-                                    type="text"
-                                    id="unidade-mais-utilizada"
-                                    maxlength="100"
-                                    placeholder="Ex: kg, caixas ou litros"
-                                >
+                            <div class="input-group">
+                                <label for="producao-observacoes">Observações</label>
+                                <textarea id="producao-observacoes" rows="3" maxlength="500"></textarea>
                             </div>
 
                             <button type="submit" class="btn-primary">
-                                Salvar resumo
+                                Registrar produção
                             </button>
 
                         </form>
+
+                        <div id="lista-producoes" class="lista-producoes" aria-live="polite"></div>
 
                     </div>
 

@@ -270,11 +270,103 @@ async function buscarPerfil(req, res) {
     }
 }
 
+async function atualizarPerfil(req, res) {
+    try {
+        if (!req.session.usuarioId) {
+            return res.status(401).json({
+                erro: 'Nenhum usuário está logado'
+            });
+        }
+
+        const { nome, email, telefone } = req.body;
+
+        if (!nome || !email) {
+            return res.status(400).json({
+                erro: 'Nome e email são obrigatórios'
+            });
+        }
+
+        const usuario = req.session.tipoUsuario === 'produtor'
+            ? await produtorModel.atualizarProdutor(
+                req.session.usuarioId,
+                nome.trim(),
+                email.trim(),
+                telefone?.trim() || null
+            )
+            : req.session.tipoUsuario === 'consumidor'
+                ? await consumidorModel.atualizarConsumidor(
+                    req.session.usuarioId,
+                    nome.trim(),
+                    email.trim(),
+                    telefone?.trim() || null
+                )
+                : null;
+
+        if (!usuario) {
+            return res.status(404).json({
+                erro: 'Usuário não encontrado'
+            });
+        }
+
+        res.json({
+            mensagem: 'Perfil atualizado com sucesso!',
+            ...usuario,
+            tipoUsuario: req.session.tipoUsuario
+        });
+    } catch (erro) {
+        console.error('ERRO AO ATUALIZAR PERFIL:', erro);
+        res.status(500).json({
+            erro: 'Não foi possível atualizar o perfil'
+        });
+    }
+}
+
+async function deletarPerfil(req, res) {
+    try {
+        if (!req.session.usuarioId) {
+            return res.status(401).json({
+                erro: 'Nenhum usuário está logado'
+            });
+        }
+
+        const usuario = req.session.tipoUsuario === 'produtor'
+            ? await produtorModel.deletarProdutor(req.session.usuarioId)
+            : req.session.tipoUsuario === 'consumidor'
+                ? await consumidorModel.deletarConsumidor(req.session.usuarioId)
+                : null;
+
+        if (!usuario) {
+            return res.status(404).json({
+                erro: 'Usuário não encontrado'
+            });
+        }
+
+        req.session.destroy((erro) => {
+            if (erro) {
+                console.error('ERRO AO ENCERRAR SESSÃO APÓS EXCLUSÃO:', erro);
+                return res.status(500).json({
+                    erro: 'Perfil excluído, mas não foi possível encerrar a sessão'
+                });
+            }
+
+            res.clearCookie('connect.sid');
+            res.json({ mensagem: 'Perfil excluído com sucesso!' });
+        });
+    } catch (erro) {
+        console.error('ERRO AO EXCLUIR PERFIL:', erro);
+        res.status(500).json({
+            erro: 'Não foi possível excluir o perfil'
+        });
+    }
+}
+
 module.exports = {
     cadastrarConsumidor,
     fazerLogin,
     listarConsumidores,
     atualizarConsumidor,
     deletarConsumidor,
-    buscarPerfil
+    buscarPerfil,
+    atualizarPerfil,
+    deletarPerfil
 };

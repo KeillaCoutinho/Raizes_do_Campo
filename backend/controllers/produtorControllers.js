@@ -95,34 +95,36 @@ async function buscarResumoProducao(req, res) {
     }
 }
 
-async function atualizarResumoProducao(req, res) {
+async function registrarProducao(req, res) {
     if (!validarSessaoProdutor(req, res)) {
         return;
     }
 
-    const {
-        ultima_colheita,
-        total_registros,
-        unidade_mais_utilizada
-    } = req.body;
+    const { id_produto, quantidade, data_colheita, observacoes } = req.body;
+    const quantidadeNumerica = Number(quantidade);
 
-    const total = Number(total_registros);
-
-    if (!Number.isInteger(total) || total < 0) {
+    if (!Number.isInteger(Number(id_produto)) || quantidadeNumerica <= 0) {
         return res.status(400).json({
-            erro: 'O total de registros deve ser um número inteiro igual ou maior que zero'
+            erro: 'Informe um produto e uma quantidade maior que zero'
         });
     }
 
     try {
-        const resumo = await produtorModel.salvarResumoProducao(
+        const producao = await produtorModel.criarProducao(
             req.session.usuarioId,
-            ultima_colheita,
-            total,
-            unidade_mais_utilizada
+            Number(id_produto),
+            quantidadeNumerica,
+            data_colheita,
+            observacoes
         );
 
-        res.json(resumo);
+        if (!producao) {
+            return res.status(404).json({
+                erro: 'Produto não encontrado ou não pertence a este produtor'
+            });
+        }
+
+        res.status(201).json(producao);
     } catch (erro) {
         console.error('ERRO AO SALVAR RESUMO DA PRODUÇÃO:', erro);
         res.status(500).json({
@@ -131,8 +133,21 @@ async function atualizarResumoProducao(req, res) {
     }
 }
 
+async function listarProducoes(req, res) {
+    if (!validarSessaoProdutor(req, res)) return;
+
+    try {
+        const producoes = await produtorModel.listarProducoes(req.session.usuarioId);
+        res.json(producoes);
+    } catch (erro) {
+        console.error('ERRO AO LISTAR PRODUÇÕES:', erro);
+        res.status(500).json({ erro: 'Erro ao buscar registros de produção' });
+    }
+}
+
 module.exports = {
     cadastrarProdutor,
     buscarResumoProducao,
-    atualizarResumoProducao
+    registrarProducao,
+    listarProducoes
 };
